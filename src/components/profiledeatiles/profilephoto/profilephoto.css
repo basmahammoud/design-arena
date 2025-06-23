@@ -1,0 +1,63 @@
+.profile-header {
+  position: relative;
+  width: 100%;
+}
+
+.profile-image-container {
+  position: absolute;
+  top: -130px;
+  left: 1px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(255, 217, 0, 0.37);
+  z-index: 10;
+  cursor: pointer;
+}
+  
+  .profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .modal-image {
+    max-width: 90vw;
+    max-height: 70vh;
+    border-radius: 8px;
+  }
+  
+  .edit-button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: linear-gradient(45deg, #000000, #e429b2);
+    box-shadow: 5px 5px 5px #4e4e4e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .edit-button:hover {
+    background-color: #005fd1;
+  }

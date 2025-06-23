@@ -1,0 +1,36 @@
+.user-menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  border: 2px solid #ddd;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-width: 160px;
+  z-index: 1000;
+  text-align: right;
+}
+
+.user-dropdown div {
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.user-dropdown div:hover {
+  background-color: #f2f2f2;
+}

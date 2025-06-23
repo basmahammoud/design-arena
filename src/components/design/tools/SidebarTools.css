@@ -1,0 +1,73 @@
+
+.main-layout {
+  display: flex;
+}
+
+.sidebar {
+  width: 90px;
+  top: 60px; 
+  left: 0;
+  background-color: #dda0cc50;
+  border-right: 1px solid #eee;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100vh;
+  box-sizing: border-box;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+  position: fixed;
+}
+
+
+.tool-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebar button {
+  background: none;
+  border: none;
+  padding: 8px;
+  font-size: 22px;
+  cursor: pointer;
+  color: #444;
+  transition: background-color 0.2s, color 0.2s;
+  border-radius: 10px;
+}
+
+.sidebar button:hover {
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+.popup-menu {
+  position: absolute;
+  top: 50px;
+  left: 60px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 10px;
+  border-radius: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 40px);
+  gap: 10px;
+  z-index: 100;
+}
+
+.popup-menu button {
+  font-size: 18px;
+  padding: 6px;
+  color: #333;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.popup-menu button:hover {
+  background-color: #eee;
+}

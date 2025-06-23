@@ -1,0 +1,77 @@
+.designer-works {
+  width: 700px;
+  margin-left: 600px;
+  margin-top: -160px;
+  padding: 20px;
+  /* position: sticky; */
+  top: 0;
+}
+
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+.work-item {
+  position: relative; /* مهم جدًا لإظهار الزر بشكل صحيح */
+}
+.work-item img {
+  width: 100%;
+  height: 220px;
+  border-radius: 3px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.work-item img:hover {
+  transform: scale(1.03);
+}
+
+.work {
+  color: rgb(73, 73, 73);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 20px;
+}
+/* زر فيغما */
+.figma-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #f24e1e;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* إظهار الزر عند التحويم */
+.work-item:hover .figma-button {
+  opacity: 1;
+}
+/* عند تصغير الشاشة */
+@media (max-width: 1200px) {
+  .designer-works {
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 10px;
+    position: static;
+    padding: 10px;
+  }
+
+  .works-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .works-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}

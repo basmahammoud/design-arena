@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Quicksand', sans-serif;
+}
+
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(360deg, #000000, #830061);
+  overflow: hidden;
+}
+
+.ring {
+  position: relative;
+  width: 550px;
+  height: 550px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ring i {
+  position: absolute;
+  inset: 0;
+  border: 3px solid gray; 
+  transition: 0.5s;
+  box-shadow: none; 
+}
+.ring.activated i {
+  border-color: var(--clr);
+  box-shadow: 0 0 5px var(--clr), 0 0 15px var(--clr), 0 0 30px var(--clr);
+}
+
+
+.ring i:nth-child(1) {
+  border-radius: 41% 59% 48% 52% / 52% 52% 48% 48%;
+  animation: animate 6s linear infinite;
+  border-color: var(--clr);
+}
+
+.ring i:nth-child(2) {
+  border-radius: 55% 45% 64% 36% / 49% 66% 34% 51%;
+  animation: animate 4s linear infinite;
+  border-color: var(--clr);
+}
+
+.ring i:nth-child(3) {
+  border-radius: 67% 33% 62% 38% / 42% 66% 34% 58%;
+  animation: animate 10s linear infinite;
+  border-color: var(--clr);
+}
+
+@keyframes animate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.login {
+  position: absolute;
+  width: 240px;
+  text-align: center;
+  left: 120px;
+}
+
+.login h2 {
+  background: linear-gradient(45deg, #e95ede, #e7e74a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;  font-family: "Script MT", cursive;
+  margin-bottom: 20px;
+  margin-left: 60px;
+  font-size: 50px;
+}
+
+.inputBx {
+  margin: 10px 0;
+}
+
+.inputBx input[type="text"],
+.inputBx input[type="password"],
+.inputBx input[type="Confirm Password"],
+.inputBx input[type="submit"],
+.inputBx select 
+ {
+  width: 130%;
+  padding: 10px;
+  border: none;
+  outline: none;
+  border-radius: 20px;
+  background: #61003a5e;
+  color: #7f7a7a;
+  /* color: #cfc3ce ; */
+  transition: all 0.3s ease-in-out;
+
+}
+
+.inputBx input[type="text"]:hover,
+.inputBx input[type="password"]:hover,
+.inputBx select:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease-in-out;
+}
+
+
+.inputBx input[type="submit"] {
+  margin-top: 10px;
+  background: linear-gradient(45deg, #e95ede, #e7e74a);
+  color: #000;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  width: 200px;
+  margin-left: 50px;
+}
+.inputBx input[type="submit"]:hover{
+  transform: scale(1.05);
+    box-shadow: 0 0 10px #da4a92, 0 0 20px #da4a92;
+
+}
+
+
+
+/* تحسين خيارات القائمة */
+.inputBx select option {
+  background-color: #222;
+  color: #fff;
+}
+
+
+
+.links {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  margin-left: 20px;
+}
+
+.links a {
+  color: #aaa;
+  font-size: 14px;
+  text-decoration: none;
+  margin-left: 20px;
+}

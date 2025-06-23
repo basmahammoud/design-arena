@@ -1,24 +1,51 @@
-import logo from './logo.svg';
+// App.jsx
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React from 'react';
 import './App.css';
+import Login from './Pages/Login/Login';
+import Layout from './components/layout/layout';
+import Homepage from './Pages/homepage/Homepage';
+import Signup from './Pages/signup/signup';
+import Profile from './Pages/profile/profile';
+import Verify from './Pages/verify/verify';
+import Design from './Pages/design-page/design-page';
+import ChoseDesign from './components/models/chose-design/chose-design';
+import Editor from './components/design/canvas/editor/Editor';
+import Preview from './components/models/preview/preview';
+import Courses from './Pages/courses/courses';
+import Subcategory from './Pages/subcategory/subcategory';
+import Video from './Pages/video/video';
+import Payment from './Pages/payment/payment';
+import { AuthProvider } from './hooks/useAuth';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+        <AuthProvider>
+    <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/verify" element={<Verify />}/>
+              <Route path="/editor" element={<Editor />} />
+              <Route path="/preview" element={<Preview />} />
+             
+              {/* نغلف الصفحات التي تحتاج Sidebar بمكون Layout */}
+
+              <Route path="/homepage" element={<Layout><Homepage /></Layout>} />
+              <Route path="/portfolio" element={<Layout><Profile /></Layout>} />
+              <Route path="/design" element={<Layout><Design /></Layout>} />
+              <Route path="/choseDesign" element={<Layout><ChoseDesign /></Layout>} />
+              <Route path="/categories" element={<Layout><Courses /></Layout>} />
+              <Route path="/subcategories/:id" element={<Layout><Subcategory /></Layout>} />
+             <Route path="/subcategories/:id/videos" element={<Layout><Video/></Layout>} />
+             <Route path="/payment/:id" element={<Payment/>} />
+
+              {/* <Route path="/navpage/*" element={<Layout><Navpage /></Layout>} /> */}
+            </Routes>
+
+    </BrowserRouter>
+        </AuthProvider>
+
   );
 }
 

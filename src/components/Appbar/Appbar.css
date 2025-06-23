@@ -1,0 +1,201 @@
+.Topbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  background-color: #ffffff;
+  height: 60px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.Topbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 5px;
+  width: 100%;
+  background-color: purple; /* خط ثابت */
+  z-index: 1;
+}
+
+.TopbarLogo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #4a4a4a;
+}
+
+.TopbarMenu {
+  display: flex;
+  position: relative;
+  gap: 2rem;
+}
+
+.TopbarMenuItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  color: #000;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+.TopbarMenuItem:hover {
+  background-color: #f0f0f0;
+}
+
+.TopbarMenuItem.active {
+  color: #5a2245;
+}
+
+/* الخط الأساسي الثابت على كامل Topbar */
+.Topbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  background-color: #e0e0e0;
+  z-index: 1;
+}
+
+
+.TopbarIndicator {
+  position: absolute;
+  bottom: -8px;
+  height: 8px;
+  background-color: #830061;
+  border-radius: 8px 8px 0 0;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+.item-heading{
+  font-size: 18px;
+  font-family: cario;
+
+}
+/* Sidebar overlay (عند فتح القائمة) */
+.SidebarOverlay {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 60px);
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 98;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+.SidebarOverlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Sidebar menu itself */
+.SidebarMenu {
+  position: fixed;
+  top: 60px;
+  left: -250px;
+  width: 250px;
+  height: calc(100vh - 60px);
+  background-color: white;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+  z-index: 99;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: left 0.3s ease-in-out;
+}
+
+.SidebarMenu.open {
+  left: 0;
+}
+
+.SidebarMenuItem {
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+}
+
+.SidebarMenuItem:hover {
+  background-color: #f0f0f0;
+}
+
+.SidebarMenuItem.active {
+  background-color: #e0e0ff;
+  color: #5a2245;
+}
+.menu-icon {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #333;
+  cursor: pointer;
+  z-index: 101;
+  transition: transform 0.3s ease;
+}
+
+/* تأثير على الأيقونة نفسها */
+.icon-wrapper {
+  display: inline-block;
+  transition: transform 0.4s ease;
+}
+
+/* عندما تكون القائمة مفتوحة → تدوير */
+.menu-icon.open .icon-wrapper {
+  transform: rotate(180deg) scale(1.1);
+}
+
+/* إظهار الزر في الشاشات الصغيرة */
+@media (max-width: 768px) {
+  .menu-icon {
+    display: block;
+  }
+}
+
+
+/* إخفاء قائمة TopbarMenu العادية تمامًا */
+/* على الشاشات الصغيرة فقط، نخفي TopbarMenu ونظهر القائمة الجانبية */
+@media (max-width: 768px) {
+  .TopbarMenu {
+    display: none !important;
+  }
+
+  .TopbarIndicator {
+    display: none !important;
+  }
+
+  .menu-icon {
+    display: block;
+  }
+}
+
+/* على الشاشات الكبيرة، نخفي زر الهامبرغر */
+@media (min-width: 769px) {
+  .menu-icon {
+    display: none;
+  }
+
+  .SidebarMenu,
+  .SidebarOverlay {
+    display: none !important;
+  }
+}
+
+

@@ -1,0 +1,17 @@
+.upload-btn {
+  background-color: #85597886 !important; 
+  padding: 10px 5px !important;
+  border-radius: 8px;
+  font-size: 10px !important;
+  font-weight: bold !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  cursor: pointer !important;
+  transition: background-color 0.3s ease, transform 0.2s ease !important;
+  box-shadow: 10px 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.upload-btn:hover {
+  background-color: #ac6e9a86 !important;
+  transform: translateY(-2px);
+}
+
