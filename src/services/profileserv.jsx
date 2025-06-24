@@ -31,3 +31,20 @@ export const Edite_profile = async (data) => {
     throw error;
   }
 };
+
+
+export const updateDesign = async (designId, data) => {
+  const token = localStorage.getItem('token');
+  try {
+    const response = await axios.put(`/designs/${designId}/update`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Update design error:', error.response?.data);
+    throw error;
+  }
+};

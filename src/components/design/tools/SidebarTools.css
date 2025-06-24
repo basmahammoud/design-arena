@@ -71,3 +71,20 @@
 .popup-menu button:hover {
   background-color: #eee;
 }
+.color-picker-label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 18px;
+  padding: 6px;
+}
+
+.color-picker-label input[type="color"] {
+  border: none;
+  background: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  cursor: pointer;
+}

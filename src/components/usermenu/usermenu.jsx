@@ -35,9 +35,9 @@ const { logout, loading } = useLogout();
         <div className="user-dropdown">
           <div onClick={() => navigate("/activity-log")}> activity</div>
           <div onClick={() => navigate("/savedvido")}>saved videos</div>
-<div onClick={logout}>
-  {loading ? "Logging out..." : "Log out"}
-</div>
+         <div onClick={logout}>
+          {loading ? "Logging out..." : "Log out"}
+        </div>
         </div>
       )}
     </div>

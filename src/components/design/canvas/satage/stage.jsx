@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stage, Layer } from 'react-konva';
+import { Stage, Layer,Rect } from 'react-konva';
 import ShapeRenderer from '../shapeRenderer';
 
 const CanvasStage = ({
@@ -14,6 +14,7 @@ const CanvasStage = ({
   handleTextEdit,
   selectedElementId,
   clearSelection,
+  backgroundColor,
 }) => {
   const handleStageClick = (e) => {
     if (e.target === e.target.getStage()) {
@@ -35,6 +36,16 @@ const CanvasStage = ({
       onMouseUp={handleMouseUp}
     >
       <Layer>
+          {/* ✅ مستطيل الخلفية الأبيض داخل مساحة العمل */}
+        <Rect
+          x={0}
+          y={0}
+          width={canvasSize.width}
+          height={canvasSize.height}
+          fill={backgroundColor}
+          shadowBlur={10}
+          cornerRadius={8}         
+        />
         <ShapeRenderer
           elements={elements}
           handleSelect={handleSelect}

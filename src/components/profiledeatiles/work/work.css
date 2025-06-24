@@ -50,6 +50,30 @@
   opacity: 0;
   transition: opacity 0.3s ease;
 }
+/* زر القلم */
+.edit-work {
+  position: absolute;
+  top: 8px;             /* نفس موضع زر فيغما */
+  right: 100px;          /* أزح الزر 60px من اليمين ليكون بجانب زر فيغما */
+  background-color: #ffffffd9;
+  padding: 8px;
+  border-radius: 50%;
+  color: #333;
+  cursor: pointer;
+  display: none;
+  transition: background-color 0.3s ease;
+  z-index: 10;
+}
+
+
+.edit-work:hover {
+  background-color: #eeeeee;
+}
+/* إظهار زر القلم عند التحويم */
+.work-item:hover .edit-work {
+  display: block;
+}
+
 
 /* إظهار الزر عند التحويم */
 .work-item:hover .figma-button {

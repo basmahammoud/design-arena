@@ -3,7 +3,7 @@ import './categories.css';
 import useCategories from '../../../hooks/usecourses'; 
 import { useNavigate } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa'; 
-import Search from '../../search/search'; // تأكد من المسار الصحيح للكمبوننت
+import Search from '../../search/search';
 
 const Categories = () => {
   const { data: categories, loading, error } = useCategories();

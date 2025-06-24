@@ -17,6 +17,7 @@ import Subcategory from './Pages/subcategory/subcategory';
 import Video from './Pages/video/video';
 import Payment from './Pages/payment/payment';
 import { AuthProvider } from './hooks/useAuth';
+import Savedvideo from './Pages/savedvideo/savedvideo';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
               <Route path="/subcategories/:id" element={<Layout><Subcategory /></Layout>} />
              <Route path="/subcategories/:id/videos" element={<Layout><Video/></Layout>} />
              <Route path="/payment/:id" element={<Payment/>} />
+             <Route path="/savedvido" element={<Savedvideo />} />
 
               {/* <Route path="/navpage/*" element={<Layout><Navpage /></Layout>} /> */}
             </Routes>

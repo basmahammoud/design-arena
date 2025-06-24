@@ -32,6 +32,7 @@ const defaultElements = [
 ];
 
 const Editor = () => {
+  const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const location = useLocation();
   const navigate = useNavigate();
   const [showAppbar, setShowAppbar] = useState(false);
@@ -134,6 +135,8 @@ const Editor = () => {
         <SidebarTools 
         onAddElement={handleAddElement}
         setElements={setElements}
+       setBackgroundColor={setBackgroundColor}
+
          />
 
         <div style={{ marginLeft: '10px', flex: 1 }}>
@@ -150,6 +153,7 @@ const Editor = () => {
             handleTextEdit={(id, text) => handleTextEdit(id, text, setElements)}
             selectedElementId={selectedElementId}
             clearSelection={() => setSelectedElementId(null)}
+            backgroundColor={backgroundColor}
           />
         </div>
         <PropertiesPanel
