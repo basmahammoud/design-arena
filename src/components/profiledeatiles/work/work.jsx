@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './work.css';
 import useUserDesigns from '../../../hooks/useviewdesign';
 import useExportToFigma from '../../../hooks/usefigma';
@@ -6,15 +6,42 @@ import useProfile from '../../../hooks/profilehooks';
 import { useNavigate } from 'react-router-dom';
 import { FaEdit } from 'react-icons/fa';
 import useUpdateDesign from '../../../hooks/useUpdateDesign';
+import EditDesignModal from '../../models/edit-design/edit-design';
 
 const MyDesign = () => {
-  const { handleUpdateDesign, loading: updateLoading, error: updateError } = useUpdateDesign();
+  const { handleUpdateDesign } = useUpdateDesign();
   const { user, loading: profileLoading } = useProfile();
   const userId = user?.id;
   const navigate = useNavigate();
 
   const { designs, loading, error } = useUserDesigns(userId);
   const { exportToFigma, loading: exportLoading, error: exportError } = useExportToFigma();
+
+  const [selectedDesign, setSelectedDesign] = useState(null);
+
+  const handleSave = async ({ name, json_data }) => {
+    try {
+      const imageUrl = `http://localhost:8000/${selectedDesign.image_path}`;
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = async () => {
+        const base64 = reader.result.split(',')[1];
+
+        await handleUpdateDesign(selectedDesign.id, {
+          name,
+          json_data,
+          image_base64: base64,
+        });
+
+        alert('تم الحفظ بنجاح');
+        setSelectedDesign(null);
+      };
+    } catch (err) {
+      alert('حدث خطأ أثناء الحفظ');
+    }
+  };
 
   if (profileLoading || !userId) {
     return <p>جاري تحميل الملف الشخصي...</p>;
@@ -34,56 +61,19 @@ const MyDesign = () => {
         <div className="works-grid">
           {designs.map((design) => (
             <div className="work-item" key={design.id}>
-              {/* صورة التصميم */}
               <img
                 src={`http://localhost:8000/${design.image_path}`}
                 alt={design.name}
                 className="design-image"
               />
 
-              {/* زر التعديل (أيقونة قلم) */}
-      <div
-  className="edit-work"
-  onClick={async () => {
-    const name = prompt('اكتب الاسم الجديد للتصميم:', design.name);
-    if (!name) return;
-
-    try {
-      // 1. تحميل الصورة وتحويلها إلى base64
-      const getBase64FromImageUrl = async (imageUrl) => {
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result.split(',')[1]); // فقط base64 بدون الـ prefix
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
-      };
-
-      const base64Image = await getBase64FromImageUrl(`http://localhost:8000/${design.image_path}`);
-
-      // 2. json_data (نفترض أنه موجود داخل design.json_data)
-      const jsonData = JSON.stringify(design.json_data || {});
-
-      // 3. إرسال البيانات كاملة
-      await handleUpdateDesign(design.id, {
-        name,
-        json_data: jsonData,
-        image_base64: base64Image,
-      });
-
-      alert('تم تعديل التصميم بنجاح');
-    } catch (error) {
-      console.error('فشل التعديل:', error);
-      alert('حدث خطأ أثناء التعديل');
-    }
-  }}
-  title="تعديل التصميم"
->
-  <FaEdit />
-</div>
-
+              <div
+                className="edit-work"
+                onClick={() => setSelectedDesign(design)}
+                title="تعديل التصميم"
+              >
+                <FaEdit />
+              </div>
 
               <button
                 className="figma-button"
@@ -96,6 +86,22 @@ const MyDesign = () => {
           ))}
         </div>
       )}
+
+     <EditDesignModal
+  isOpen={!!selectedDesign}
+  design={selectedDesign}
+  onClose={() => setSelectedDesign(null)}
+  onSave={handleSave}
+  onEditDesign={() => {
+    navigate(`/editor?type=desktop/${selectedDesign.id}`, {
+      state: {
+        json_data: selectedDesign.json_data,
+        designId: selectedDesign.id,
+      },
+    });
+  }}
+/>
+
     </div>
   );
 };

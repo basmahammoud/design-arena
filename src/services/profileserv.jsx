@@ -36,7 +36,7 @@ export const Edite_profile = async (data) => {
 export const updateDesign = async (designId, data) => {
   const token = localStorage.getItem('token');
   try {
-    const response = await axios.put(`/designs/${designId}/update`, data, {
+    const response = await axios.post(`/designs/${designId}/update`, data, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

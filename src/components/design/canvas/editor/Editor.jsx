@@ -17,6 +17,7 @@ import useDeleteElementOnKeypress from '../../../../hooks/delete';
 import Topbar from '../../topbar/Topbar';
 import Appbar from '../../../Appbar/Appbar';
 import './Editor.css';
+import { useEffect } from 'react';
 
 const defaultElements = [
   {
@@ -34,6 +35,7 @@ const defaultElements = [
 const Editor = () => {
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const location = useLocation();
+  const [designId, setDesignId] = useState(null);
   const navigate = useNavigate();
   const [showAppbar, setShowAppbar] = useState(false);
   const type = new URLSearchParams(location.search).get('type');
@@ -60,6 +62,24 @@ const Editor = () => {
     selectedElementId,
     setElements,
   });
+
+useEffect(() => {
+  if (location.state?.json_data) {
+    try {
+      const parsed = typeof location.state.json_data === 'string'
+        ? JSON.parse(location.state.json_data)
+        : location.state.json_data;
+
+      if (Array.isArray(parsed)) {
+        setElements(parsed);
+        setDesignId(location.state.designId || null); //  تخزين المعرف
+      }
+    } catch (error) {
+      console.error("فشل في تحليل json_data:", error);
+    }
+  }
+}, [location.state]);
+
 
   useDeleteElementOnKeypress(
     selectedElementId,
