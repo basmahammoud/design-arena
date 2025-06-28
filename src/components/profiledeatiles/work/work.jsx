@@ -86,14 +86,13 @@ const MyDesign = () => {
           ))}
         </div>
       )}
-
-     <EditDesignModal
-  isOpen={!!selectedDesign}
-  design={selectedDesign}
-  onClose={() => setSelectedDesign(null)}
-  onSave={handleSave}
-  onEditDesign={() => {
-    navigate(`/editor?type=desktop/${selectedDesign.id}`, {
+      <EditDesignModal
+         isOpen={!!selectedDesign}
+         design={selectedDesign}
+         onClose={() => setSelectedDesign(null)}
+         onSave={handleSave}
+         onEditDesign={() => {
+         navigate(`/editor?type=desktop/${selectedDesign.id}`, {
       state: {
         json_data: selectedDesign.json_data,
         designId: selectedDesign.id,

@@ -32,19 +32,21 @@ export const Edite_profile = async (data) => {
   }
 };
 
-
-export const updateDesign = async (designId, data) => {
-  const token = localStorage.getItem('token');
+export const updateDesign = async (designId, { name, json_data, image_base64 }) => {
   try {
-    const response = await axios.post(`/designs/${designId}/update`, data, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
+    const response = await axios.post(`http://localhost:8000/designs/${designId}/update`, {
+      name,
+      json_data: JSON.stringify(json_data), //  هذا هو الحل المهم
+      image_base64,
     });
+
     return response.data;
   } catch (error) {
-    console.error('Update design error:', error.response?.data);
+    if (error.response?.status === 422) {
+      console.error('🛑 Update design validation error:', error.response.data.errors);
+    } else {
+      console.error('❌ Unexpected update error:', error);
+    }
     throw error;
   }
 };

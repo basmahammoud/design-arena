@@ -3,7 +3,7 @@ import { FaEye, FaBars } from 'react-icons/fa';
 import './Topbar.css';
 import SaveButton from '../canvas/savebtn/savebtn';
 
-const Topbar = ({ onToggleAppbar, onPreview ,elements, canvasSize, stageRef }) => {
+const Topbar = ({ onToggleAppbar, onPreview ,elements, canvasSize, stageRef ,designId}) => {
   return (
     <div className="editor-topbar">
 
@@ -18,6 +18,7 @@ const Topbar = ({ onToggleAppbar, onPreview ,elements, canvasSize, stageRef }) =
           elements={elements}
           canvasSize={canvasSize}
           stageRef={stageRef}
+          designId={designId}
         />
         <button className="preview-btn" onClick={onPreview} title="معاينة التصميم">
           <FaEye />

@@ -145,6 +145,7 @@ useEffect(() => {
            elements={elements}
           canvasSize={canvasSize}
          stageRef={stageRef}
+         designId={designId}
         />
       )}
 

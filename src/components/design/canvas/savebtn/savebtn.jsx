@@ -2,7 +2,7 @@
 import { useSaveDesign } from '../../../../hooks/usesavedesign';
 import { FaSave } from 'react-icons/fa';
 
-const SaveButton = ({ elements, canvasSize, stageRef }) => {
+const SaveButton = ({ elements, canvasSize, stageRef, designId }) => {
   const { saveDesign, isSaving } = useSaveDesign();
 
   const handleSave = async () => {
@@ -21,6 +21,7 @@ const SaveButton = ({ elements, canvasSize, stageRef }) => {
         elements,
         imageBase64,
         name: 'new design',
+        designId, // الآن يأتي من props
       });
 
       alert('✅ تم حفظ التصميم بنجاح');
@@ -30,7 +31,7 @@ const SaveButton = ({ elements, canvasSize, stageRef }) => {
   };
 
   return (
-   <button
+    <button
       className="save-btn"
       onClick={handleSave}
       disabled={isSaving}
