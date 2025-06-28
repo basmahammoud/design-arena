@@ -1,4 +1,6 @@
-const Search = ({ originalCategories, setFilteredCategories }) => {
+import './search.css'
+
+const Search = ({ originalCategories, setFilteredCategories, containerClassName }) => {
   const handleChange = (e) => {
     const searchTerm = e.target.value.toLowerCase();
     const filtered = originalCategories.filter(cat =>
@@ -8,12 +10,14 @@ const Search = ({ originalCategories, setFilteredCategories }) => {
   };
 
   return (
-    <input
-      type="text"
-      placeholder="Search..."
-      className="search-input"
-      onChange={handleChange}
-    />
+    <div className={containerClassName}>
+      <input
+        type="text"
+        placeholder="Search..."
+        className="search-input"
+        onChange={handleChange}
+      />
+    </div>
   );
 };
 

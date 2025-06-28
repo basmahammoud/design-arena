@@ -28,15 +28,13 @@ const Categories = () => {
     className="search-icon"
     title="Search"
   />
-  <div className={`search-container ${showSearch ? 'show' : ''}`}>
+  <div className={`search-container1 ${showSearch ? 'show' : ''}`}>
     <Search
       originalCategories={categories}
       setFilteredCategories={setFilteredCategories}
     />
   </div>
 </div>
-
-
 
       <h1>Popular courses</h1>
       <div className='category-list'>

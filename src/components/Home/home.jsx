@@ -2,6 +2,7 @@ import "./home.css";
 import useHomeDesigns from "../../hooks/useHomepage";
 import { useState, useEffect } from "react";
 import Search from "../../components/search/search"; 
+// import '../search/search.css';
 
 const Home = () => {
   const { designs, loading, error } = useHomeDesigns();
@@ -24,7 +25,12 @@ const Home = () => {
       <h1 className="home-title">معرض التصاميم</h1>
 
       {/* مكون البحث */}
-      <Search originalCategories={designs} setFilteredCategories={setFilteredDesigns} />
+      <Search 
+      originalCategories={designs}
+      setFilteredCategories={setFilteredDesigns} 
+      containerClassName="search-container-designs"
+       />
+
 
       {loading && <p>جارٍ التحميل...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
