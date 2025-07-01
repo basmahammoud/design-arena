@@ -6,12 +6,14 @@ import MyDesign from '../work/work';
 import './profileinfo.css';
 import Edite_profile from '../edite-profile/edite-profile';
 import Profilephoto from '../profilephoto/profilephoto';
+import Streming from '../../streming/strem/strem';
 
 const Profileinfo = () => {
   return (
     <div className="page-container">
 
       <div >
+        <Streming/>
         <Coverphoto />
          <Profilephoto />
         <Personalinfo />

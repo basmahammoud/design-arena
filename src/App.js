@@ -18,6 +18,8 @@ import Video from './Pages/video/video';
 import Payment from './Pages/payment/payment';
 import { AuthProvider } from './hooks/useAuth';
 import Savedvideo from './Pages/savedvideo/savedvideo';
+import Lives from './components/streming/lives/lives';
+import ViewerRoom from './components/streming/ViewerRoom/ViewerRoom';
 
 function App() {
   return (
@@ -41,6 +43,9 @@ function App() {
              <Route path="/subcategories/:id/videos" element={<Layout><Video/></Layout>} />
              <Route path="/payment/:id" element={<Payment/>} />
              <Route path="/savedvido" element={<Savedvideo />} />
+             <Route path="/lives" element={<Layout><Lives /></Layout>} />
+             <Route path="/viewer-token" element={<Layout><ViewerRoom /></Layout>} />
+
 
               {/* <Route path="/navpage/*" element={<Layout><Navpage /></Layout>} /> */}
             </Routes>

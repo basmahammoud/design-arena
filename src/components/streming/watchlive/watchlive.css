@@ -1,0 +1,42 @@
+/* Watchlive.css */
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+
+.custom-button:hover {
+  background-color: #72040d;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(121, 11, 20, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(121, 11, 20, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(121, 11, 20, 0);
+  }
+}
+
+.custom-button {
+  margin-top: 180px;
+  font-size: 18px;
+  padding: 10px 20px;
+  background-color: #a10d1a;
+  color: white;
+  border-radius: 8px;
+  text-transform: none;
+  transition: background-color 0.3s ease;
+  border: none;
+  cursor: pointer;
+  
+  /* إضافة حركة النبض */
+  animation: pulse 1.8s infinite;
+}

@@ -39,5 +39,34 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+      <!-- index.html -->
+<script type="module">
+  import { connect } from "https://cdn.skypack.dev/livekit-client";
+
+  async function startViewer() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomName = urlParams.get("room");
+    const token = sessionStorage.getItem("viewer_token");
+
+    if (!roomName || !token) {
+      alert("Missing room or token");
+      return;
+    }
+
+    const room = await connect("wss://digitizer-a4odfmnb.livekit.cloud", token);
+
+    const videoContainer = document.getElementById("video-container");
+
+    room.on("trackSubscribed", (track, publication, participant) => {
+      if (track.kind === "video") {
+        const element = track.attach();
+        videoContainer.appendChild(element);
+      }
+    });
+  }
+
+  window.onload = startViewer;
+</script>
+
   </body>
 </html>

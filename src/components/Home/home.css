@@ -14,7 +14,7 @@
 }
 
 .design-grid {
-  margin-top: 150px;
+  margin-top: 50px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;

@@ -22,7 +22,6 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      <h1 className="home-title">معرض التصاميم</h1>
 
       {/* مكون البحث */}
       <Search 
@@ -31,7 +30,7 @@ const Home = () => {
       containerClassName="search-container-designs"
        />
 
-
+       
       {loading && <p>جارٍ التحميل...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
