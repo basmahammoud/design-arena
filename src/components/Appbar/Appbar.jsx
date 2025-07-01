@@ -7,6 +7,8 @@ import { FaBars, FaTimes } from 'react-icons/fa';
 import UserMenu from "../usermenu/usermenu";
 import useProfile from "../../hooks/profilehooks"; 
 import './Appbar.css';
+import NotificationsMenu from '../Notification/NotificationsMenu';
+
 
 const Appbar = ({ onClose }) => {
   const [selected, setSelected] = useState(() => {
@@ -96,6 +98,7 @@ const Appbar = ({ onClose }) => {
               : null
           }
         />
+            <NotificationsMenu /> 
       </div>
 
         {/* Sidebar Slide Menu */}

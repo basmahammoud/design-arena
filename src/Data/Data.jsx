@@ -7,7 +7,6 @@ import {
   } from "react-icons/fa";
   
   import img2 from '../assets/img2.png';
-
   
   export const SidebarData = [
     {
@@ -26,7 +25,10 @@ import {
   {
   heading: "Design",
   isDesignPopup: true, 
-}
+},
+
+
+
 
   ];
   
