@@ -56,6 +56,22 @@
   border-color: var(--clr);
 }
 
+.skip-btn {
+  background: transparent;
+  border: 2px solid #aaa;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #fff;
+  transition: 0.3s;
+}
+
+.skip-btn:hover {
+  background-color: #444;
+  border-color: #fff;
+}
+
+
 @keyframes animate {
   0% {
     transform: rotate(0deg);

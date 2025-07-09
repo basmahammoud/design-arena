@@ -6,9 +6,9 @@ axios.defaults.baseURL = 'http://localhost:8000';
 export const profile = async () => {
   const token = localStorage.getItem('token'); // جلب التوكن من التخزين
   try {
-    const res = await axios.get('/profile', {
+    const res = await axios.get('http://localhost:8000/profile', {
       headers: {
-        Authorization: `Bearer ${token}`,  // إضافة التوكن هنا
+        Authorization: `Bearer ${token}`,     
       },
     });
     return res.data;
@@ -24,7 +24,6 @@ export const Edite_profile = async (data) => {
         'Content-Type': 'multipart/form-data'
       }
     });
-    console.log("Profile data:", response.data);
     return response.data;
   } catch (error) {
     console.error('Profile fetch error:', error);
@@ -32,21 +31,41 @@ export const Edite_profile = async (data) => {
   }
 };
 
-export const updateDesign = async (designId, { name, json_data, image_base64 }) => {
+export const updateDesign = async (designId, { json_data, 
+  image_base64, 
+  name = null, 
+  description = null }) => {
   try {
-    const response = await axios.post(`http://localhost:8000/designs/${designId}/update`, {
-      name,
-      json_data: JSON.stringify(json_data), //  هذا هو الحل المهم
-      image_base64,
+    const formData = new FormData();
+    formData.append('json_data', JSON.stringify(json_data));
+    formData.append('name', name ?? '');
+    formData.append('description', description ?? '');
+
+    image_base64.forEach((base64, index) => {
+      formData.append(`image_base64[${index}]`, base64);
     });
+
+    const token = localStorage.getItem('token'); // إذا عندك توكن للحماية
+
+    const response = await axios.post(
+      `http://localhost:8000/designs/${designId}/update`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
 
     return response.data;
   } catch (error) {
-    if (error.response?.status === 422) {
-      console.error('🛑 Update design validation error:', error.response.data.errors);
-    } else {
-      console.error('❌ Unexpected update error:', error);
-    }
+    console.error('❌ Unexpected update error:', error.response?.data || error.message);
     throw error;
   }
 };
+
+
+
+
+

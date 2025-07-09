@@ -16,6 +16,8 @@ import {
 import useDeleteElementOnKeypress from '../../../../hooks/delete';
 import Topbar from '../../topbar/Topbar';
 import Appbar from '../../../Appbar/Appbar';
+import useProfile from "../../../../hooks/profilehooks";
+import { getWebDesign } from "../../../../services/savebuttonserv";
 import './Editor.css';
 import { useEffect } from 'react';
 
@@ -35,7 +37,9 @@ const defaultElements = [
 const Editor = () => {
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const location = useLocation();
-  const [designId, setDesignId] = useState(null);
+  const { user, loading } = useProfile();
+  const initialDesignId = location.state?.designId || null;
+  const [designId, setDesignId] = useState(initialDesignId);
   const navigate = useNavigate();
   const [showAppbar, setShowAppbar] = useState(false);
   const type = new URLSearchParams(location.search).get('type');
@@ -44,6 +48,7 @@ const Editor = () => {
     width: type === 'mobile' ? 390 : 1200,
     height: type === 'mobile' ? 844 : 800,
   };
+  const isGuest = localStorage.getItem('guest') === 'true';
 
   const {
     elements,
@@ -64,21 +69,43 @@ const Editor = () => {
   });
 
 useEffect(() => {
-  if (location.state?.json_data) {
-    try {
-      const parsed = typeof location.state.json_data === 'string'
-        ? JSON.parse(location.state.json_data)
-        : location.state.json_data;
-
-      if (Array.isArray(parsed)) {
-        setElements(parsed);
-        setDesignId(location.state.designId || null); //  تخزين المعرف
+  const fetchDesign = async () => {
+    if (initialDesignId) {
+      try {
+        const res = await getWebDesign(initialDesignId);
+        const design = res.design;
+        const parsed = design.json_data;
+        if (parsed && Array.isArray(parsed.pages)) {
+          const firstPageElements = parsed.pages[0]?.elements || [];
+          setElements(firstPageElements);
+          setDesignId(design.id);
+        } else {
+          console.warn("⚠️ التصميم موجود لكن pages غير موجودة:", parsed);
+        }
+      } catch (error) {
+        console.error("❌ فشل في جلب التصميم:", error);
       }
-    } catch (error) {
-      console.error("فشل في تحليل json_data:", error);
     }
+  };
+  fetchDesign();
+}, [initialDesignId]);
+
+
+
+
+  useEffect(() => {
+  if (!loading && !user) {
+    alert("يجب تسجيل الدخول أولاً");
+    navigate("/"); // أو navigate("/login") حسب المسار الذي تستخدمه
   }
-}, [location.state]);
+}, [user, loading, navigate]);
+
+useEffect(() => {
+  if (!loading && !user && !isGuest) {
+    navigate('/login');
+  }
+}, [user, loading]);
+
 
 
   useDeleteElementOnKeypress(

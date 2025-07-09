@@ -14,7 +14,6 @@ const Coverphoto = () => {
     ? `http://localhost:8000/storage/${user.cover_photo}`
     : null; // عرض صورة افتراضية إذا لم تكن هناك صورة
 
-  console.log('User cover:', coverPhotoUrl);
 
   return (
     <div className="cover-container">

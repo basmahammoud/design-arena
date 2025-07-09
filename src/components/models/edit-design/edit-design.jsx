@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './edit-design.css';
 
-const EditDesignModal = ({ isOpen, onClose, design, onSave, onEditDesign }) => {
+const EditDesignModal = ({ isOpen, onClose, design, onSave, navigate }) => {
   const [name, setName] = useState('');
   const [jsonData, setJsonData] = useState('');
 
@@ -16,7 +16,29 @@ const EditDesignModal = ({ isOpen, onClose, design, onSave, onEditDesign }) => {
   if (!isOpen || !design) return null;
 
   const handleSubmit = () => {
-    onSave({ name, json_data: jsonData });
+    let parsedJson;
+    try {
+      parsedJson = JSON.parse(jsonData);
+    } catch (e) {
+      alert('⚠️ JSON غير صالح!');
+      return;
+    }
+    parsedJson.name = name;
+
+    onSave({ name, json_data: parsedJson }); // أرسل كـ object وليس نص
+  };
+
+  const handleEditDesign = () => {
+    // 🧹 امسح البيانات القديمة من localStorage حتى لا تُحمَّل تلقائيًا
+    localStorage.removeItem('editor-elements-desktop'); 
+    // أو حسب الـ type الذي تستخدمه، مثلاً editor-elements-mobile لو كان التصميم موبايل
+
+    // ✈️ انتقل للمحرر مع تمرير json_data و designId في state
+    navigate(`/editor?type=desktop/${design.id}`, {
+      state: {
+        designId: design.id,
+      },
+    });
   };
 
   return (
@@ -36,7 +58,7 @@ const EditDesignModal = ({ isOpen, onClose, design, onSave, onEditDesign }) => {
 
         <div className="modal-buttons">
           <button onClick={handleSubmit}>حفظ</button>
-          <button onClick={onEditDesign}>تعديل التصميم في المحرر</button>
+          <button onClick={handleEditDesign}>تعديل التصميم في المحرر</button>
           <button onClick={onClose}>إغلاق</button>
         </div>
       </div>

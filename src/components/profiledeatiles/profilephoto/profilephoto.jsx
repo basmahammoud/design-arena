@@ -14,7 +14,6 @@ const Profilephoto = () => {
       ? `http://localhost:8000/storage/${user.profile_picture}`
       : null;
 
-    console.log('User profile:', src);
 
     setProfileSrc(src); //  هذه هي الإضافة المهمة
   }, [user]);

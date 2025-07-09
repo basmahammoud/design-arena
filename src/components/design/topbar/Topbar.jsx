@@ -12,7 +12,7 @@ const Topbar = ({ onToggleAppbar, onPreview ,elements, canvasSize, stageRef ,des
         <FaBars />
       </button>
 
-      {/* زر المعاينة */}
+      {/* زر الحفظ */}
     <div className="topbar-actions">
         <SaveButton
           elements={elements}

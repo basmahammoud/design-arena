@@ -16,6 +16,7 @@ const SaveButton = ({ elements, canvasSize, stageRef, designId }) => {
       }
 
       console.log('🎨 Image Base64:', imageBase64);
+       console.log('📌 designId in SaveButton:', designId);
 
       await saveDesign({
         elements,

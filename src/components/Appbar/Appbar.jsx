@@ -20,6 +20,7 @@ const Appbar = ({ onClose }) => {
   const menuRefs = useRef([]);
   const [openDesignModal, setOpenDesignModal] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // ← جديد
+  const isGuest = localStorage.getItem('guest') === 'true';
 
   const navigate = useNavigate();
   const { user, loading } = useProfile();
@@ -46,6 +47,16 @@ const Appbar = ({ onClose }) => {
     localStorage.setItem('selectedMenuIndex', selected);
   }, [selected]);
 
+  const visibleMenuItems = SidebarData.filter(item => {
+  const headingText = typeof item.heading === 'string' ? item.heading : item.heading?.props?.children;
+
+  const requiresAuth =
+    headingText === "Design" || item.path === "/portfolio";
+    
+  return user || !requiresAuth;
+});
+
+
   return (
     <>
       <div className="Topbar">
@@ -64,7 +75,7 @@ const Appbar = ({ onClose }) => {
 
 
         <div className={`TopbarMenu ${isMenuOpen ? 'show' : ''}`}>
-          {SidebarData.map((item, index) => (
+          {visibleMenuItems.map((item, index) => (
             <div
               className={selected === index ? 'TopbarMenuItem active' : 'TopbarMenuItem'}
               key={index}
@@ -91,14 +102,21 @@ const Appbar = ({ onClose }) => {
           />
         </div>
 
-        <UserMenu
-          userImage={
-            user?.profile_picture
-              ? `http://localhost:8000/storage/${user.profile_picture}`
-              : null
-          }
-        />
-            <NotificationsMenu /> 
+{isGuest ? (
+  <div className="signup-button" onClick={() => navigate('/')}>
+    Sign up
+  </div>
+) : (
+  <UserMenu
+    userImage={
+      user?.profile_picture
+        ? `http://localhost:8000/storage/${user.profile_picture}`
+        : null
+    }
+  />
+)}
+
+     {!isGuest && <NotificationsMenu />}
       </div>
 
         {/* Sidebar Slide Menu */}

@@ -16,7 +16,7 @@ const NotificationsMenu = () => {
     const fetchData = async () => {
       try {
         const data = await notifications();
-        console.log('🔥 Notifications data:', data);
+        // console.log('🔥 Notifications data:', data);
         setNotificationsList(data?.data ?? data ?? []);
       } catch (err) {
         console.error('خطأ في جلب الإشعارات:', err);

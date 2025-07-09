@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Lives as fetchLives } from '../services/streming'; 
+import { Lives as fetchLives } from '../services/streaming'; 
 
 const useLives = () => {
   const [lives, setLives] = useState([]);

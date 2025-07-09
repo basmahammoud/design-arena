@@ -1,6 +1,6 @@
 // src/hooks/useVerify.js
 import { useState } from 'react';
-import { verify } from '../services/verifyserv';
+import { verify } from '../services/auth';
 
 const useVerify = () => {
   const [user, setUser] = useState(null);
