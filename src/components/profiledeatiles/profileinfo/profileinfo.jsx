@@ -6,7 +6,6 @@ import MyDesign from '../work/work';
 import './profileinfo.css';
 import Edit_profile from '../edit-profile/edit-profile';
 import Profilephoto from '../profilephoto/profilephoto';
-import Streaming from '../../streming/stream/stream';
 
 const Profileinfo = () => {
   return (
@@ -16,7 +15,6 @@ const Profileinfo = () => {
         <Coverphoto />
         <Profilephoto />
         <Personalinfo />
-        <Streaming />
         <Edit_profile />
       </div>
       <div>

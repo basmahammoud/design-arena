@@ -18,7 +18,7 @@ export const useSaveDesign = () => {
             {
               elements,                // العناصر هنا مباشرة
               meta_data: {},           // يمكنك تعبئتها إذا عندك بيانات إضافية
-              backgroundColor: "#ffffff" // يمكن أن تجعله ديناميكي إذا عندك متغيّر
+              // backgroundColor: "#ffffff" // يمكن أن تجعله ديناميكي إذا عندك متغيّر
             }
           ],
           meta_data: {},              // بيانات عامة للتصميم إذا لزم
