@@ -23,44 +23,47 @@ const Home = () => {
   return (
     <div className="home-container">
 
-      {/* مكون البحث */}
-      <Search 
-      originalCategories={designs}
-      setFilteredCategories={setFilteredDesigns} 
-      containerClassName="search-container-designs"
-       />
-
        
       {loading && <p>جارٍ التحميل...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       <div className="design-grid">
-        {filteredDesigns.map((design) => (
-          <div key={design.id} className="design-card" onClick={() => handleDesignClick(design)}>
-            <img
-              src={design.images?.[0] || "/placeholder.png"}
-              alt={design.name}
-              className="design-image"
-            />
-            <h2 className="design-title">{design.name}</h2>
-          </div>
-        ))}
+    {filteredDesigns.map((design) => {
+  // معالجة image_path
+  let imageUrl = "/placeholder.png";
+  if (Array.isArray(design.image_path) && design.image_path.length > 0) {
+    imageUrl = `http://localhost:8000/${design.image_path[0]}`;
+  }
+
+  return (
+    <div key={design.id} className="design-card" onClick={() => handleDesignClick(design)}>
+      <img
+        src={imageUrl}
+        alt={design.name}
+        className="design-image"
+      />
+      <h2 className="design-title">{design.name}</h2>
+    </div>
+  );
+})}
+
       </div>
 
       {/* Modal لعرض بقية الصور */}
-      {selectedDesign && (
-        <div className="modal-overlay" onClick={() => setSelectedDesign(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>{selectedDesign.name}</h2>
-            <div className="modal-images">
-              {selectedDesign.images.map((img, index) => (
-                <img key={index} src={img} alt={`img-${index}`} className="modal-img" />
-              ))}
-            </div>
-            <button onClick={() => setSelectedDesign(null)}>إغلاق</button>
-          </div>
-        </div>
-      )}
+{selectedDesign && (
+  <div className="modal-overlay" onClick={() => setSelectedDesign(null)}>
+    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <h2>{selectedDesign.name}</h2>
+      <div className="modal-images">
+        {(Array.isArray(selectedDesign.image_path) ? selectedDesign.image_path : []).map((img, index) => (
+          <img key={index} src={`http://localhost:8000/${img}`} alt={`img-${index}`} className="modal-img" />
+        ))}
+      </div>
+      <button onClick={() => setSelectedDesign(null)}>إغلاق</button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

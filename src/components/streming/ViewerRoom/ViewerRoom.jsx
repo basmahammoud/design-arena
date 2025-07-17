@@ -1,6 +1,6 @@
-// src/pages/ViewerRoom.jsx
 import React, { useEffect } from 'react';
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
+import { Room, RoomEvent } from 'livekit-client';
 
 const ViewerRoom = () => {
   const [searchParams] = useSearchParams();
@@ -38,6 +38,36 @@ const ViewerRoom = () => {
       startViewer();
     }
   }, [room, token, navigate]);
+
+  useEffect(() => {
+    if (!room || !token) return;
+
+    const livekitRoom = new Room();
+
+    const connectToRoom = async () => {
+      try {
+        await livekitRoom.connect('wss://digitizer-a4odfmnb.livekit.cloud', token);
+        console.log("🎉 تم الاتصال بالغرفة كمشاهد");
+
+        livekitRoom.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+          if (track.kind === "video") {
+            const videoEl = track.attach();
+            videoEl.style.width = "100%";
+            videoEl.style.height = "100%";
+            document.getElementById("video-container").appendChild(videoEl);
+          }
+        });
+      } catch (err) {
+        console.error("❌ فشل الاتصال بالبث:", err);
+      }
+    };
+
+    connectToRoom();
+
+    return () => {
+      livekitRoom.disconnect();
+    };
+  }, [room, token]);
 
   return (
     <div>

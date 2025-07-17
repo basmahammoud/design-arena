@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import SidebarTools from '../../tools/SidebarTools';
 import PropertiesPanel from '../../panels/propertisepanel/PropertiesPanel';
@@ -16,8 +16,9 @@ import {
 import useDeleteElementOnKeypress from '../../../../hooks/delete';
 import Topbar from '../../topbar/Topbar';
 import Appbar from '../../../Appbar/Appbar';
+import useProfile from "../../../../hooks/profilehooks";
+import { getWebDesign } from "../../../../services/savebuttonserv";
 import './Editor.css';
-import { useEffect } from 'react';
 
 const defaultElements = [
   {
@@ -33,17 +34,25 @@ const defaultElements = [
 ];
 
 const Editor = () => {
-  const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const location = useLocation();
-  const [designId, setDesignId] = useState(null);
+  const { user, loading } = useProfile();
+  const initialDesignId = location.state?.designId || null;
+  const [designId, setDesignId] = useState(initialDesignId);
   const navigate = useNavigate();
   const [showAppbar, setShowAppbar] = useState(false);
   const type = new URLSearchParams(location.search).get('type');
   const storageKey = `editor-elements-${type || 'default'}`;
+  const bgcolorStorageKey = `editor-bgcolor-${type || 'default'}`; // ✅ مفتاح التخزين للون الخلفية
+
   const canvasSize = {
     width: type === 'mobile' ? 390 : 1200,
     height: type === 'mobile' ? 844 : 800,
   };
+  const isGuest = localStorage.getItem('guest') === 'true';
+
+  // ✅ عند البداية: اقرأ اللون المحفوظ أو اجعل القيمة الافتراضية #ffffff
+  const savedColor = localStorage.getItem(bgcolorStorageKey);
+  const [backgroundColor, setBackgroundColor] = useState(savedColor || '#ffffff');
 
   const {
     elements,
@@ -63,23 +72,39 @@ const Editor = () => {
     setElements,
   });
 
-useEffect(() => {
-  if (location.state?.json_data) {
-    try {
-      const parsed = typeof location.state.json_data === 'string'
-        ? JSON.parse(location.state.json_data)
-        : location.state.json_data;
-
-      if (Array.isArray(parsed)) {
-        setElements(parsed);
-        setDesignId(location.state.designId || null); //  تخزين المعرف
-      }
-    } catch (error) {
-      console.error("فشل في تحليل json_data:", error);
+  useEffect(() => {
+    if (initialDesignId) {
+      const fetchDesign = async () => {
+        try {
+          const res = await getWebDesign(initialDesignId);
+          const design = res.design;
+          const parsed = design.json_data;
+          if (parsed && Array.isArray(parsed.pages)) {
+            const firstPageElements = parsed.pages[0]?.elements || [];
+            setElements(firstPageElements);
+            setDesignId(design.id);
+          } else {
+            console.warn("⚠️ التصميم موجود لكن pages غير موجودة:", parsed);
+          }
+        } catch (error) {
+          console.error("❌ فشل في جلب التصميم:", error);
+        }
+      };
+      fetchDesign();
     }
-  }
-}, [location.state]);
+  }, [initialDesignId, setElements]);
 
+  useEffect(() => {
+    if (!loading && !user) {
+      alert("يجب تسجيل الدخول أولاً");
+      navigate("/"); // أو navigate("/login")
+    }
+  }, [user, loading, navigate]);
+
+  // ✅ كلما تغيّر backgroundColor خزّنه في localStorage
+  useEffect(() => {
+    localStorage.setItem(bgcolorStorageKey, backgroundColor);
+  }, [backgroundColor, bgcolorStorageKey]);
 
   useDeleteElementOnKeypress(
     selectedElementId,
@@ -98,11 +123,20 @@ useEffect(() => {
   };
 
   const goToPreview = () =>
-    navigate('/preview', { state: { elements, canvasSize, scale: 1.5 } });
+    navigate('/preview', {
+      state: {
+        elements,
+        canvasSize,
+        scale: 1.5,
+        backgroundColor, // أرسل اللون الحالي للعرض المسبق
+      },
+    });
 
   const resetToDefault = () => {
     setElements(defaultElements);
     localStorage.removeItem(storageKey);
+    localStorage.removeItem(bgcolorStorageKey); // ✅ امسح لون الخلفية
+    setBackgroundColor('#ffffff'); // ✅ أرجع اللون للافتراضي
   };
 
   const handleMouseDown = () => {
@@ -136,29 +170,28 @@ useEffect(() => {
   };
 
   return (
-<div className={`editor-root ${type === 'mobile' ? 'mobile' : 'desktop'}`}>
-      {/*  إظهار الـ Topbar فقط إذا لم يكن Appbar ظاهرًا */}
+    <div className={`editor-root ${type === 'mobile' ? 'mobile' : 'desktop'}`}>
+      {/* Topbar يظهر فقط إذا لم يظهر Appbar */}
       {!showAppbar && (
         <Topbar
           onToggleAppbar={() => setShowAppbar(true)}
           onPreview={goToPreview}
-           elements={elements}
+          elements={elements}
           canvasSize={canvasSize}
-         stageRef={stageRef}
-         designId={designId}
+          stageRef={stageRef}
+          designId={designId}
         />
       )}
 
-      {/*  Appbar يظهر كـ overlay */}
+      {/* Appbar يظهر كـ overlay */}
       {showAppbar && <Appbar onClose={() => setShowAppbar(false)} />}
 
       <div className="editor-container" style={{ display: 'flex' }}>
-        <SidebarTools 
-        onAddElement={handleAddElement}
-        setElements={setElements}
-       setBackgroundColor={setBackgroundColor}
-
-         />
+        <SidebarTools
+          onAddElement={handleAddElement}
+          setElements={setElements}
+          setBackgroundColor={setBackgroundColor}
+        />
 
         <div style={{ marginLeft: '10px', flex: 1 }}>
           <EditorButtons onPreview={goToPreview} onReset={resetToDefault} />
@@ -177,6 +210,7 @@ useEffect(() => {
             backgroundColor={backgroundColor}
           />
         </div>
+
         <PropertiesPanel
           shapes={elements}
           onUpdateShape={(id, props) =>
@@ -185,7 +219,6 @@ useEffect(() => {
           selectedId={selectedElementId}
         />
       </div>
-
     </div>
   );
 };

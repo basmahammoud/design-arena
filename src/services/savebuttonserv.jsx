@@ -6,13 +6,24 @@ axios.defaults.withCredentials = true;
 
 export const saveWebDesign = async ({ elements, imageBase64, name = '' }) => {
   try {
-  const response = await axios.post('http://localhost:8000/web-designs', {
-    json_data: JSON.stringify(elements), //  مهم جداً
-    image_base64: imageBase64,           //  يجب أن يبدأ بـ "data:image/png;base64,..."
-    name
-  });
+    const jsonPayload = {
+      name: name || 'Untitled Design',
+      meta_data: [], // تقدر تبني بيانات حقيقية لو عندك
+      pages: [
+        {
+          backgroundColor: 16777215, // مثال لون أبيض
+          meta_data: [], // تقدر تضيف بيانات هنا
+          elements: elements
+        }
+      ]
+    };
 
-  return response.data;
+    const response = await axios.post('http://localhost:8000/web-designs', {
+      json_data: JSON.stringify(jsonPayload),
+      image_base64: Array.isArray(imageBase64) ? imageBase64 : [imageBase64],
+      name
+    });
+    return response.data;
 
   } catch (error) {
     if (error.response?.status === 422) {
@@ -26,13 +37,13 @@ export const saveWebDesign = async ({ elements, imageBase64, name = '' }) => {
 
 
 
+
 //جلب تصميم معين
 export const getWebDesign = async (id) => {
   const response = await axios.get(`http://localhost:8000/web-designs/${id}`);
   return response.data;
 };
 //جلب تصاميم الشخص
-// services/designService.js
 export const getDesign = async (userId) => {
   const response = await axios.get(`http://localhost:8000/designs/user/${userId}`, { withCredentials: true });
   return response.data;

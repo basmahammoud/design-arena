@@ -7,7 +7,7 @@ import Img from '../../components/img/img';
 const Subcategory = () => {
   return (
     <Layout>      
-       <Img/>
+       {/* <Img/> */}
         <Subcategories/>
     </Layout>
   );

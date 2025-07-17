@@ -61,6 +61,20 @@ const onSubmit = async (data) => {
           <a href="#">Forget Password</a>
           <a href="/signup">Signup</a>
         </div>
+        <div className="inputBx">
+  <button
+    type="button"
+    className="skip-btn"
+   onClick={() => {
+  localStorage.setItem('guest', 'true');
+  localStorage.removeItem('user'); // لو كانت هناك بيانات قديمة
+  navigate('/homepage');
+}}
+  >
+    Skip
+  </button>
+</div>
+
       </form>
     </div>
     </div>

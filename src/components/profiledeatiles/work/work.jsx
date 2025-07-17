@@ -21,7 +21,13 @@ const MyDesign = () => {
 
   const handleSave = async ({ name, json_data }) => {
     try {
-      const imageUrl = `http://localhost:8000/${selectedDesign.image_path}`;
+let imagePaths = [];
+try {
+  imagePaths = JSON.parse(selectedDesign.image_path || '[]');
+} catch (e) {
+  console.error('فشل في تحويل image_path إلى JSON:', e);
+}
+     const imageUrl = imagePaths.length > 0 ? `http://localhost:8000/${imagePaths[0]}` : null;
       const response = await fetch(imageUrl);
       const blob = await response.blob();
       const reader = new FileReader();
@@ -32,7 +38,7 @@ const MyDesign = () => {
         await handleUpdateDesign(selectedDesign.id, {
           name,
           json_data,
-          image_base64: base64,
+          image_base64: [base64]
         });
 
         alert('تم الحفظ بنجاح');
@@ -50,7 +56,7 @@ const MyDesign = () => {
   return (
     <div className="designer-works">
       <button className="work">تصاميمي</button>
-      <hr style={{ border: '0.5px solid #ccc', margin: '1rem 0' }} />
+      <hr className='line' />
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {exportError && <p style={{ color: 'red' }}>{exportError}</p>}
@@ -61,11 +67,30 @@ const MyDesign = () => {
         <div className="works-grid">
           {designs.map((design) => (
             <div className="work-item" key={design.id}>
-              <img
-                src={`http://localhost:8000/${design.image_path}`}
-                alt={design.name}
-                className="design-image"
-              />
+{(() => {
+  let imagePaths = [];
+  try {
+    imagePaths = JSON.parse(design.image_path || '[]');
+  } catch (e) {
+    console.error('فشل في تحويل image_path إلى JSON:', e);
+  }
+
+  const imageUrl = imagePaths.length > 0 ? `http://localhost:8000/${imagePaths[0]}` : null;
+
+  return (
+    imageUrl ? (
+      <img
+        src={imageUrl}
+        alt={design.name}
+        className="design-image"
+      />
+    ) : (
+      <div className="no-image">لا توجد صورة</div>
+    )
+  );
+})()}
+
+
 
               <div
                 className="edit-work"
@@ -86,19 +111,12 @@ const MyDesign = () => {
           ))}
         </div>
       )}
-      <EditDesignModal
-         isOpen={!!selectedDesign}
-         design={selectedDesign}
-         onClose={() => setSelectedDesign(null)}
-         onSave={handleSave}
-         onEditDesign={() => {
-         navigate(`/editor?type=desktop/${selectedDesign.id}`, {
-      state: {
-        json_data: selectedDesign.json_data,
-        designId: selectedDesign.id,
-      },
-    });
-  }}
+    <EditDesignModal
+  isOpen={!!selectedDesign}
+  design={selectedDesign}
+  onClose={() => setSelectedDesign(null)}
+  onSave={handleSave}
+  navigate={navigate}
 />
 
     </div>

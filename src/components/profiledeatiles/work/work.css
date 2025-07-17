@@ -79,6 +79,12 @@
 .work-item:hover .figma-button {
   opacity: 1;
 }
+
+.line{
+   border: 0.5px solid #ccc;
+  margin: 1rem 0;
+  width: 80rem;
+}
 /* عند تصغير الشاشة */
 @media (max-width: 1200px) {
   .designer-works {

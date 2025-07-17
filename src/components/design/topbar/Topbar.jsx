@@ -2,6 +2,7 @@ import React from 'react';
 import { FaEye, FaBars } from 'react-icons/fa'; 
 import './Topbar.css';
 import SaveButton from '../canvas/savebtn/savebtn';
+import Streaming from '../../streming/stream/stream';
 
 const Topbar = ({ onToggleAppbar, onPreview ,elements, canvasSize, stageRef ,designId}) => {
   return (
@@ -12,7 +13,7 @@ const Topbar = ({ onToggleAppbar, onPreview ,elements, canvasSize, stageRef ,des
         <FaBars />
       </button>
 
-      {/* زر المعاينة */}
+      {/* زر الحفظ */}
     <div className="topbar-actions">
         <SaveButton
           elements={elements}
@@ -23,6 +24,7 @@ const Topbar = ({ onToggleAppbar, onPreview ,elements, canvasSize, stageRef ,des
         <button className="preview-btn" onClick={onPreview} title="معاينة التصميم">
           <FaEye />
         </button>
+     <Streaming />
       </div>
     </div>
   );

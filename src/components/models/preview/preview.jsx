@@ -35,7 +35,7 @@ const ImageShape = ({ imageSrc, x, y, width, height, draggable, onClick }) => {
 const Preview = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { elements: initialElements, canvasSize, scale } = location.state || {};
+  const { elements: initialElements, canvasSize, scale ,backgroundColor} = location.state || {};
 
   const [elements, setElements] = useState(initialElements || []);
   const [selectedImageSrc, setSelectedImageSrc] = useState(null);
@@ -63,7 +63,16 @@ const Preview = () => {
       <div className="modal-content">
         <button className="close-button" onClick={() => navigate(-1)}>×</button>
         <Stage width={canvasSize.width} height={canvasSize.height}>
+          
           <Layer scale={{ x: scale, y: scale }} offset={{ x: 0, y: 0 }}>
+             {/* خلفية الصفحة */}
+    <Rect
+      x={0}
+      y={0}
+      width={canvasSize.width}
+      height={canvasSize.height}
+      fill={backgroundColor || '#ffffff'} // استخدم اللون الممرر أو الأبيض افتراضيًا
+    />
             {elements.map((el) => {
               switch (el.type) {
                 case 'text':
@@ -80,7 +89,8 @@ const Preview = () => {
                       y={el.y}
                       radiusX={el.radiusX}
                       radiusY={el.radiusY}
-                      fill={el.fill}
+                       fill={el.fill}
+                       //fill={backgroundColor || '#ffffff'} 
                     />
                   );
                 case 'image':

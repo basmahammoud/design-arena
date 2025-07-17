@@ -22,25 +22,31 @@ const Subcategories = () => {
   };
 
   return (
-    <div className='category-countainer'>
-      <h1>Subcategories</h1>
-      <div className='category-list'>
-        {subcategories.map((sub) => (
-          <div 
-            className='category' 
-            key={sub.id} 
-            onClick={() => handleClick(sub)} 
-            style={{ cursor: 'pointer' }}
-          >
-            <img src={work} alt={sub.name} className='category-image' />
-            <div className='title'>
-              <h3>{sub.name}</h3>
-              <p>Type: {sub.type === 0 ? 'Free' : 'Paid'}</p>
-            </div>
+<div className='subcategory-countainer'>
+  <div className="left-panel">
+    {/* <img   src={h}
+     alt="Logo" className="panel-image" /> */}
+  </div>  <div className='subcategory-list'>
+    {subcategories.map((sub) => (
+      <div 
+        className='subcategory' 
+        key={sub.id}
+        onClick={() => handleClick(sub)}
+      >
+        <div className='left'>
+          <img src={work} alt={sub.name} className='avatar' />
+          <div className='info'>
+            <h3>{sub.name}</h3>
+            <p>Paid: {sub.type === 0 ? 'No' : 'Yes'}</p>
           </div>
-        ))}
+        </div>
+        <div className='arrow'>➔</div>
       </div>
-    </div>
+    ))}
+  </div>
+</div>
+
+
   );
 };
 

@@ -4,23 +4,21 @@ import Personalinfo from '../personal_info/personal-info';
 import Connect from '../connect/connectbutton';
 import MyDesign from '../work/work';
 import './profileinfo.css';
-import Edite_profile from '../edite-profile/edite-profile';
+import Edit_profile from '../edit-profile/edit-profile';
 import Profilephoto from '../profilephoto/profilephoto';
-import Streming from '../../streming/strem/strem';
 
 const Profileinfo = () => {
   return (
     <div className="page-container">
 
       <div >
-        <Streming/>
         <Coverphoto />
-         <Profilephoto />
+        <Profilephoto />
         <Personalinfo />
-        <Edite_profile/>
+        <Edit_profile />
       </div>
       <div>
-      <MyDesign />
+        <MyDesign />
       </div>
 
     </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getViewerToken } from '../services/streming';
+import { getViewerToken } from '../services/streaming';
 
 const useViewerToken = () => {
   const [loading, setLoading] = useState(false);
