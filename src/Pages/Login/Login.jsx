@@ -13,19 +13,20 @@ export default function Login() {
   const navigate = useNavigate();
 
 const onSubmit = async (data) => {
-  try {
+ // try {
     const success = await login(data);
     if (success) {
       navigate('/homepage');
     }
-  } catch (error) {
-    if (error.response && error.response.status === 403) {
-      navigate('/verify'); 
-    } else {
-      console.error('Login error:', error);
-    }
-  }
-};
+   } 
+// catch (error) {
+//     if (error.response && error.response.status === 403) {
+//       navigate('/verify'); 
+//     } else {
+//       console.error('Login error:', error);
+//     }
+//   }
+// };
 
   return (
     <div className= "login-page">

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>مشاهدة البث</title>
+  </head>
+  <body style="margin: 0; background: #000;">
+    <h2 style="color: white; text-align: center;">📺 مشاهدة البث</h2>
+    <div id="video-container" style="width: 100%; height: 80vh; background: #000;"></div>
+
+    <script type="module">
+      import { connect } from "https://cdn.skypack.dev/livekit-client";
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const room = urlParams.get("room");
+      const token = urlParams.get("token");
+
+      if (!room || !token) {
+        alert("مفقود room أو token");
+        window.location.href = "/";
+      }
+
+      const startViewer = async () => {
+        try {
+          const livekitRoom = await connect("wss://digitizer-a4odfmnb.livekit.cloud", token);
+
+          const container = document.getElementById("video-container");
+
+          livekitRoom.on("trackSubscribed", (track) => {
+            if (track.kind === "video") {
+              const element = track.attach();
+              container.appendChild(element);
+            }
+          });
+        } catch (err) {
+          console.error("فشل الاتصال بـ LiveKit:", err);
+        }
+      };
+
+      startViewer();
+    </script>
+  </body>
+</html>

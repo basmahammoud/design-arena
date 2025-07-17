@@ -20,6 +20,8 @@ import { AuthProvider } from './hooks/useAuth';
 import Savedvideo from './Pages/savedvideo/savedvideo';
 import Lives from './components/streming/lives/lives';
 import ViewerRoom from './components/streming/ViewerRoom/ViewerRoom';
+import PublisherRoom from './components/streming/PublisherRoom';
+import PublisherPageWrapper from './components/streming/PublisherPageWrapper';
 
 function App() {
   return (
@@ -28,7 +30,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              <Route path="/verify" element={<Verify />}/>
+              {/* <Route path="/verify" element={<Verify />}/> */}
               <Route path="/editor" element={<Editor />} />
               <Route path="/preview" element={<Preview />} />
              
@@ -45,6 +47,8 @@ function App() {
              <Route path="/savedvido" element={<Savedvideo />} />
              <Route path="/lives" element={<Layout><Lives /></Layout>} />
              <Route path="/viewer-token" element={<Layout><ViewerRoom /></Layout>} />
+             {/* <Route path="/Publisher" element={<Layout><PublisherRoom /></Layout>} /> */}
+              <Route path="/publisher" element={<PublisherPageWrapper />} />
 
 
               {/* <Route path="/navpage/*" element={<Layout><Navpage /></Layout>} /> */}
