@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import './edit-design.css';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  Typography,
+} from '@mui/material';
 
 const EditDesignModal = ({ isOpen, onClose, design, onSave, navigate }) => {
   const [name, setName] = useState('');
   const [jsonData, setJsonData] = useState('');
 
-  //  مزامنة الحالة عند تغيير التصميم
   useEffect(() => {
     if (design) {
       setName(design.name || '');
@@ -24,45 +31,41 @@ const EditDesignModal = ({ isOpen, onClose, design, onSave, navigate }) => {
       return;
     }
     parsedJson.name = name;
-
-    onSave({ name, json_data: parsedJson }); // أرسل كـ object وليس نص
+    onSave({ name, json_data: parsedJson });
   };
 
   const handleEditDesign = () => {
-    // 🧹 امسح البيانات القديمة من localStorage حتى لا تُحمَّل تلقائيًا
-    localStorage.removeItem('editor-elements-desktop'); 
-    // أو حسب الـ type الذي تستخدمه، مثلاً editor-elements-mobile لو كان التصميم موبايل
-
-    // ✈️ انتقل للمحرر مع تمرير json_data و designId في state
+    localStorage.removeItem('editor-elements-desktop');
     navigate(`/editor?type=desktop/${design.id}`, {
-      state: {
-        designId: design.id,
-      },
+      state: { designId: design.id },
     });
   };
 
   return (
-    <div className="modal">
-      <div className="modal-edit">
-        <h2>تعديل التصميم</h2>
+    <Dialog open={isOpen} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>تعديل التصميم</DialogTitle>
 
-        <label>اسم التصميم:</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} />
+      <DialogContent dividers>
+        <TextField
+          label="اسم التصميم"
+          fullWidth
+          margin="normal"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
-        {/* <label>JSON Data:</label>
-        <textarea
-          rows="10"
-          value={jsonData}
-          onChange={(e) => setJsonData(e.target.value)}
-        /> */}
+      </DialogContent>
 
-        <div className="modal-buttons">
-          <button onClick={handleSubmit}>حفظ</button>
-          <button onClick={handleEditDesign}>تعديل التصميم في المحرر</button>
-          <button onClick={onClose}>إغلاق</button>
-        </div>
-      </div>
-    </div>
+      <DialogActions>
+        <Button onClick={handleSubmit} variant="contained" color="primary">
+          حفظ
+        </Button>
+        <Button onClick={handleEditDesign} variant="outlined" color="secondary">
+          تعديل في المحرر
+        </Button>
+        <Button onClick={onClose}>إغلاق</Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

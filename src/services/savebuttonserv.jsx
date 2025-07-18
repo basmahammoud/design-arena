@@ -41,6 +41,7 @@ export const saveWebDesign = async ({ elements, imageBase64, name = '' }) => {
 //جلب تصميم معين
 export const getWebDesign = async (id) => {
   const response = await axios.get(`http://localhost:8000/web-designs/${id}`);
+  console.log("re",response);
   return response.data;
 };
 //جلب تصاميم الشخص

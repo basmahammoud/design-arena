@@ -19,7 +19,7 @@ export default function Signup() {
 
     const success = await registerUser(data);
     if (success) {
-      navigate('/homepage');
+      navigate('/verify');
     }
   };
 

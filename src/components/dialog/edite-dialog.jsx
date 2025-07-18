@@ -41,30 +41,33 @@ const ProfileEditDialog = ({ user, onProfileUpdated }) => {
   };
 
 
-  const handleSubmit = async () => {
-    const data = new FormData();
+const handleSubmit = async () => {
+  const data = new FormData();
 
-    for (const key in formData) {
-      const originalValue = user[key];
+  for (const key in formData) {
+    const originalValue = user[key];
 
-      if ((key === 'cover_photo' || key === 'profile_picture') && formData[key] instanceof File) {
-        data.append(key, formData[key]);
-        data.append('figma', formData.figma);
-      } else if (String(formData[key]) !== String(originalValue)) {
-        data.append(key, formData[key]);
-      }
+    if ((key === 'cover_photo' || key === 'profile_picture') && formData[key] instanceof File) {
+      data.append(key, formData[key]);
+      data.append('figma', formData.figma);
+    } else if (String(formData[key]) !== String(originalValue)) {
+      data.append(key, formData[key]);
     }
+  }
 
+  if (!Array.from(data.keys()).length) {
+    setOpen(false);
+    return;
+  }
 
-    if (!Array.from(data.keys()).length) {
-      setOpen(false);
-      return;
-    }
+  await editProfile(data);
 
-    await editProfile(data);
-    if (!error) setOpen(false);
-    if (onProfileUpdated) onProfileUpdated();
-  };
+  if (!error) {
+    await onProfileUpdated(); 
+    setOpen(false);
+  }
+};
+
 
   return (
     <>

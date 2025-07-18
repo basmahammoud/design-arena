@@ -6,24 +6,34 @@ import Subscategory from '../../components/Home/subs/subs';
 import Competition from '../../components/Home/competition/competition';
 import Search from '../../components/search/search';
 import useHomeDesigns from '../../hooks/useHomepage';
+import useDesignSearch from '../../hooks/useDesignSearch';
 
 const Homepage = () => {
-  const [selectedCategory, setSelectedCategory] = useState('Design'); // << هنا التغيير
-  const { designs, loading, error } = useHomeDesigns();
-  const [filteredDesigns, setFilteredDesigns] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('Design');
+  const [query, setQuery] = useState('');
+
+  const { designs, loading: designsLoading, error } = useHomeDesigns();
+  const { results: searchResults, loading: searchLoading } = useDesignSearch(query);
+
+  // نحدد التصاميم التي ستُعرض بناءً على وجود بحث
+  const displayedDesigns = query ? searchResults : designs;
+  const isLoading = query ? searchLoading : designsLoading;
 
   return (
     <Layout>
       {/* مكون البحث */}
       <Search
-        originalCategories={designs}
-        setFilteredCategories={setFilteredDesigns}
+        onSearch={setQuery}
         containerClassName="search-container-designs"
       />
+
       <Watchlive />
       <Subscategory onCategorySelect={setSelectedCategory} />
+
+      {selectedCategory === 'Design' && (
+        <Home designs={displayedDesigns} loading={isLoading} />
+      )}
       
-      {selectedCategory === 'Design' && <Home />}
       {selectedCategory === 'Competition' && <Competition />}
     </Layout>
   );

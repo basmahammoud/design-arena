@@ -1,12 +1,9 @@
-import './search.css'
+// components/search/search.js
+import './search.css';
 
-const Search = ({ originalCategories, setFilteredCategories, containerClassName }) => {
+const Search = ({ onSearch, containerClassName }) => {
   const handleChange = (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    const filtered = originalCategories.filter(cat =>
-      cat.name.toLowerCase().includes(searchTerm)
-    );
-    setFilteredCategories(filtered);
+    onSearch(e.target.value);
   };
 
   return (

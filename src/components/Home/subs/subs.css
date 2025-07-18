@@ -8,7 +8,7 @@
 .card-sub {
   flex: 0 0 auto;  /* منع التمدد */
   width: 200px;    /* عرض ثابت لكل عنصر */
-  height: 80px;
+  height: 60px;
   position: relative;
   overflow: hidden;
   border-radius: 10px;

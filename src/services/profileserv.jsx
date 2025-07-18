@@ -57,7 +57,7 @@ export const updateDesign = async (designId, { json_data,
         }
       }
     );
-
+  console.log("re",response);
     return response.data;
   } catch (error) {
     console.error('❌ Unexpected update error:', error.response?.data || error.message);

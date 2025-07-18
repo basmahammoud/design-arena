@@ -17,7 +17,7 @@ const CanvasStage = ({
   backgroundColor,
 }) => {
   const handleStageClick = (e) => {
-    if (e.target === e.target.getStage()) {
+if (e.target === e.target.getStage() || e.target.className === 'Rect') {
       clearSelection();
     }
   };
