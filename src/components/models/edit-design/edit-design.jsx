@@ -49,12 +49,12 @@ const EditDesignModal = ({ isOpen, onClose, design, onSave, navigate }) => {
         <label>اسم التصميم:</label>
         <input value={name} onChange={(e) => setName(e.target.value)} />
 
-        <label>JSON Data:</label>
+        {/* <label>JSON Data:</label>
         <textarea
           rows="10"
           value={jsonData}
           onChange={(e) => setJsonData(e.target.value)}
-        />
+        /> */}
 
         <div className="modal-buttons">
           <button onClick={handleSubmit}>حفظ</button>

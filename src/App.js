@@ -30,7 +30,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              {/* <Route path="/verify" element={<Verify />}/> */}
+              <Route path="/verify" element={<Verify />}/>
               <Route path="/editor" element={<Editor />} />
               <Route path="/preview" element={<Preview />} />
              
