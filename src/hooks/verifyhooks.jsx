@@ -13,11 +13,11 @@ const useVerify = () => {
       const data = await verify({ code });
       console.log('Response from verify():', data);
       setUser(data.user);
-      return true; // ✅ أضف هذا
+      return true; //  أضف هذا
     } catch (err) {
       console.error('Error verifying code:', err);
       setError('Verification failed. Please try again.');
-      return false; // ✅ وأيضًا هذا
+      return false; //  وأيضًا هذا
     } finally {
       setLoading(false);
     }

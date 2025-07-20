@@ -11,7 +11,7 @@ const useRegister = () => {
     setError(null);
     try {
       const data = await registerRequest(credentials);
-      localStorage.setItem('token', data.token); // حسب ما يعيده السيرفر
+      localStorage.setItem('token', data.token); 
       return true; // تم التسجيل بنجاح
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
