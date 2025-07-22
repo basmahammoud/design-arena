@@ -3,6 +3,8 @@ import { fetchSubvideos } from '../services/coursesserv';
 
 const useSubvideos = (id) => {
   const [videos, setVideos] = useState([]);
+  const [sub, setSub] = useState(null);
+  const [hasAccess, setHasAccess] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -10,8 +12,9 @@ const useSubvideos = (id) => {
     const load = async () => {
       try {
         const data = await fetchSubvideos(id);
-        // إذا data هو كائن كامل
-        setVideos(data.videos || []);  
+        setVideos(data.videos || []);
+        setSub(data.sub || null);
+        setHasAccess(data.hasAccess || false);
       } catch (err) {
         setError(err);
       } finally {
@@ -24,7 +27,7 @@ const useSubvideos = (id) => {
     }
   }, [id]);
 
-  return { videos, loading, error };
+  return { videos, sub, hasAccess, loading, error };
 };
 
 export default useSubvideos;

@@ -1,118 +1,264 @@
+/* General Styles */
 .videos-container {
-  padding: 20px;
+  padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .videos-container h1 {
+  margin-top: 50px;
   text-align: center;
-  margin-bottom: 30px;
-  color: #333;
+  margin-bottom: 2rem;
+  color: #2c3e50;
+  font-size: 2.2rem;
 }
 
-.videos-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 25px;
-  padding-inline: 10px;
-}
-
-.video-card {
-  background-color: #e9dbe896;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  box-shadow: 5px 4px 10px rgb(104, 92, 102);
-  width: 250px;
-  height: auto; /* اجعل الارتفاع تلقائيًا حسب المحتوى */
-  padding: 0; /* إزالة الحواف الداخلية */
-  overflow: hidden; /* منع المحتوى من الخروج */
-  transition: transform 0.2s;
-  display: flex;
-  flex-direction: column;
-  margin-right: 15px;
-}
-
-.video-card:hover {
-  transform: scale(1.03);
-}
-
-.video-card h3 {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-  color: #222;
-}
-
-.video-card p {
-  font-size: 0.95rem;
-  color: #555;
-  margin-bottom: 10px;
-}
-
-.video-card video {
-  width: 95%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 12px 12px 0 0;
-  display: block;         /* مهم لضمان أن margin يعمل */
-  margin: 0 auto;         /* يحاذي الفيديو في المنتصف أفقيًا */
-}
-
-.video-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  position: relative;
-}
-
-.icons-container {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-/* الحفظ */
-.save-icon,
-.like-icon {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 20px;
-  color: #888;
-  transition: color 0.3s ease;
-}
-
-.save-icon:hover,
-.like-icon:hover {
-  color: #333;
-}
-
-.save-icon.saved {
-  color: black;
-}
-
-/* الإعجاب */
-.like-icon.liked {
-  color: red;
-}
-
+/* Search Bar */
 .search-bar-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
 }
 
 .video-search-input {
-  width: 60%;
-  padding: 10px 15px;
-  font-size: 16px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
+  width: 70%;
+  max-width: 600px;
+  padding: 0.8rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 25px;
+  border: 1px solid #ddd;
   outline: none;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .video-search-input:focus {
   border-color: #7a5c85;
+  box-shadow: 0 2px 10px rgba(122, 92, 133, 0.2);
+}
+
+/* Payment Section */
+.payment-required-section {
+  margin-bottom: 3rem;
+}
+
+.payment-message-box {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border: 1px solid #e1e4e8;
+}
+
+.payment-message-content {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.payment-lock-icon {
+  font-size: 2.5rem;
+  color: #7a5c85;
+  margin-bottom: 1rem;
+}
+
+.payment-message-content h3 {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.payment-message-content p {
+  color: #666;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.pay-now-button {
+  background: linear-gradient(135deg, #7a5c85 0%, #5d3f6a 100%);
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(122, 92, 133, 0.3);
+}
+
+.pay-now-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(122, 92, 133, 0.4);
+}
+
+/* Video Cards */
+.videos-list, .locked-videos-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 0;
+}
+
+.video-card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid #e1e4e8;
+}
+
+.video-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.video-card.locked {
+  opacity: 0.9;
+  position: relative;
+}
+
+.video-header {
+  padding: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.video-header h3 {
+  font-size: 1.1rem;
+  color: #2c3e50;
+  margin: 0;
+  flex: 1;
+}
+
+.video-description {
+  padding: 0 1.2rem 1.2rem;
+  color: #666;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.icons-container {
+  display: flex;
+  gap: 0.8rem;
+  margin-left: 0.8rem;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  transition: all 0.2s ease;
+}
+
+.icon-button:hover:not(:disabled) {
+  color: #666;
+}
+
+.icon-button:disabled {
+  cursor: not-allowed;
+}
+
+.icon-button.liked {
+  color: #ff4757;
+}
+
+.icon-button.saved {
+  color: #7a5c85;
+}
+
+.icon {
+  font-size: 1.2rem;
+}
+
+/* Video Player & Locked State */
+.video-player-container, .video-preview-container {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  background-color: #000;
+}
+
+.video-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+}
+
+.locked-video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.locked-video-overlay:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+.preview-lock-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #fff;
+}
+
+.video-placeholder {
+  width: 100%;
+  padding-top: 56.25%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+
+/* Messages */
+.loading-message, .error-message, .no-videos-message {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.error-message {
+  color: #ff4757;
+}
+
+.video-player-wrapper video{
+   width: 95%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+  display: block;         /* مهم لضمان أن margin يعمل */
+  margin: 0 auto; 
+
+
+}
+
+.payment-button{
+  margin-top: 50px;
+  margin-left: 40px;
+  background-color: yellow;
+
 }

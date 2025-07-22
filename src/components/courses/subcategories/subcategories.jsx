@@ -13,11 +13,11 @@ const Subcategories = () => {
   if (error) return <p>Error loading subcategories.</p>;
 
   const handleClick = (sub) => {
-    if (sub.type === 1) {
-      navigate(`/payment/${sub.id}`);
-    } else {
+    // if (sub.type === 1) {
+    //   navigate(`/payment/${sub.id}`);
+    // } else {
       navigate(`/subcategories/${sub.id}/videos`);
-    }
+    //}
   };
 
   return (
@@ -42,7 +42,7 @@ const Subcategories = () => {
                 />
                 <div className='info'>
                   <h3>{sub.name}</h3>
-                  <p>Paid: {sub.type === 0 ? 'No' : 'Yes'}</p>
+                  <p>price: {sub.is_paid === 0 ? 'No' : 'Yes'}</p>
                 </div>
               </div>
               <div className='arrow'>➔</div>

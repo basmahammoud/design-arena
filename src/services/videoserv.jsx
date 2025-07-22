@@ -25,7 +25,6 @@ export const unsaveVideo = async (videoId) => {
   return res.data;
 };
 
-//  تابع تسجيل الإعجاب
 export const likeVideo = async (videoId) => {
   const res = await axios.post(`${API_BASE}/${videoId}/like`, {}, {
     withCredentials: true
@@ -34,7 +33,6 @@ export const likeVideo = async (videoId) => {
   return res.data;
 };
 
-// تابع إلغاء الإعجاب
 export const unlikeVideo = async (videoId) => {
   const res = await axios.delete(`${API_BASE}/${videoId}/like`, {
     data: {}
