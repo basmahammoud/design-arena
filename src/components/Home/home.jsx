@@ -29,8 +29,8 @@ const Home = () => {
 
       <div className="design-grid">
     {filteredDesigns.map((design) => {
-  // معالجة image_path
-  let imageUrl = "/placeholder.png";
+
+let imageUrl = "/placeholder.png";
   if (Array.isArray(design.image_path) && design.image_path.length > 0) {
     imageUrl = `http://localhost:8000/${design.image_path[0]}`;
   }
