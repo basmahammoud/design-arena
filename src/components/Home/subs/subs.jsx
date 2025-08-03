@@ -1,13 +1,17 @@
 import React from 'react';
 import './subs.css';
 import card1 from '../../../assets/card1.jpg';
-
-const categories1 = [
-  { name: 'Design', image: card1 },
-  { name: 'Competition', image: card1 },
-];
+import { useTranslation } from "react-i18next";
 
 const Subscategory = ({ onCategorySelect }) => {
+  const { t } = useTranslation();
+
+  // هنا نستخدم t لترجمة أسماء الفئات
+  const categories1 = [
+    { name: t('Design'), image: card1 },
+    { name: t('Competition'), image: card1 },
+  ];
+
   return (
     <div className="sub-container">
       {categories1.map((category, index) => (

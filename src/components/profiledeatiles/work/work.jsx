@@ -6,11 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import { FaEdit } from 'react-icons/fa';
 import useUpdateDesign from '../../../hooks/useUpdateDesign';
 import EditDesignModal from '../../models/edit-design/edit-design';
+import { useTranslation } from "react-i18next";
 
 const MyDesign = ({ user, refetchProfile }) => {
   const { handleUpdateDesign } = useUpdateDesign();
   const userId = user?.id;
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const { designs, loading, error } = useUserDesigns(userId);
   const { exportToFigma, loading: exportLoading, error: exportError } = useExportToFigma();
@@ -61,7 +63,7 @@ const MyDesign = ({ user, refetchProfile }) => {
 
   return (
     <div className="designer-works">
-      <button className="work">تصاميمي</button>
+      <button className="work">{t('My Designs')}</button>
       <hr className='line' />
 
       {error && <p style={{ color: 'red' }}>{error}</p>}

@@ -1,37 +1,16 @@
 import { 
-    FaDollarSign, 
-    FaUsers, 
-    FaHome ,
-    FaLaptopCode ,
-    FaUserCircle , 
+    FaDollarSign,  
   } from "react-icons/fa";
   
   import img2 from '../assets/img2.png';
-  
-  export const SidebarData = [
-    {
-      heading: <h3 className="item-heading">Homepage</h3>,
-      path: "/homepage",
-    },
-  
-    {
-      heading: <h3 className="item-heading">portfolio</h3>,
-      path: "/portfolio",
-    },
-    {
-      heading: <h3 className="item-heading">courses</h3>,
-      path: "/categories",
-    },
-  {
-  heading: "Design",
-  isDesignPopup: true, 
-},
 
+export const AppData = [
+  { headingKey: "Homepage", path: "/homepage" },
+  { headingKey: "Portfolio", path: "/portfolio" },
+  { headingKey: "Courses", path: "/categories" },
+  { headingKey: "Design", isDesignPopup: true },
+];
 
-
-
-  ];
-  
   export const CardsData = [
     {
       title: "Earnings",
