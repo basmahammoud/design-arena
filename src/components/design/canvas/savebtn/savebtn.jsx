@@ -18,12 +18,14 @@ const SaveButton = ({ elements, canvasSize, stageRef, designId }) => {
       console.log('🎨 Image Base64:', imageBase64);
        console.log('📌 designId in SaveButton:', designId);
 
-      await saveDesign({
-        elements,
-        imageBase64,
-        name: 'new design',
-        designId, // الآن يأتي من props
-      });
+    await saveDesign({
+     elements,
+     imageBase64,
+     name: 'new design',
+     designId,
+     canvasSize, // ✅ خزن أبعاد الكانفاس
+     type: canvasSize.width === 390 ? "mobile" : "web" // أو خزن النوع مباشرة
+    });
 
       alert('✅ تم حفظ التصميم بنجاح');
     } catch (error) {

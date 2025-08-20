@@ -42,15 +42,15 @@ const Editor = () => {
   const [showAppbar, setShowAppbar] = useState(false);
   const type = new URLSearchParams(location.search).get('type');
   const storageKey = `editor-elements-${type || 'default'}`;
-  const bgcolorStorageKey = `editor-bgcolor-${type || 'default'}`; // ✅ مفتاح التخزين للون الخلفية
+  const bgcolorStorageKey = `editor-bgcolor-${type || 'default'}`;
 
-  const canvasSize = {
-    width: type === 'mobile' ? 390 : 1200,
-    height: type === 'mobile' ? 844 : 800,
-  };
+const [canvasSize, setCanvasSize] = useState({
+  width: type === 'mobile' ? 390 : 1200,
+  height: type === 'mobile' ? 844 : 800,
+});
+
   const isGuest = localStorage.getItem('guest') === 'true';
 
-  // ✅ عند البداية: اقرأ اللون المحفوظ أو اجعل القيمة الافتراضية #ffffff
   const savedColor = localStorage.getItem(bgcolorStorageKey);
   const [backgroundColor, setBackgroundColor] = useState(savedColor || '#ffffff');
 
@@ -79,13 +79,22 @@ const Editor = () => {
           const res = await getWebDesign(initialDesignId);
           const design = res.design;
           const parsed = design.json_data;
-          if (parsed && Array.isArray(parsed.pages)) {
-            const firstPageElements = parsed.pages[0]?.elements || [];
-            setElements(firstPageElements);
-            setDesignId(design.id);
-          } else {
-            console.warn("⚠️ التصميم موجود لكن pages غير موجودة:", parsed);
-          }
+        if (parsed && Array.isArray(parsed.pages)) {
+  const firstPageElements = parsed.pages[0]?.elements || [];
+  setElements(firstPageElements);
+
+  //  استرجاع الأبعاد من meta_data إذا كانت موجودة
+  if (parsed.meta_data?.canvasSize) {
+  setCanvasSize(type === 'mobile'
+    ? { width: 390, height: 844 }
+    : { width: 1200, height: 800 }
+  );  }
+
+  setDesignId(design.id);
+} else {
+  console.warn("⚠️ التصميم موجود لكن pages غير موجودة:", parsed);
+}
+
         } catch (error) {
           console.error("❌ فشل في جلب التصميم:", error);
         }
@@ -97,11 +106,11 @@ const Editor = () => {
   useEffect(() => {
     if (!loading && !user) {
       alert("يجب تسجيل الدخول أولاً");
-      navigate("/"); // أو navigate("/login")
+      navigate("/"); 
     }
   }, [user, loading, navigate]);
 
-  // ✅ كلما تغيّر backgroundColor خزّنه في localStorage
+  //  كلما تغيّر backgroundColor خزّنه في localStorage
   useEffect(() => {
     localStorage.setItem(bgcolorStorageKey, backgroundColor);
   }, [backgroundColor, bgcolorStorageKey]);
@@ -135,8 +144,8 @@ const Editor = () => {
   const resetToDefault = () => {
     setElements(defaultElements);
     localStorage.removeItem(storageKey);
-    localStorage.removeItem(bgcolorStorageKey); // ✅ امسح لون الخلفية
-    setBackgroundColor('#ffffff'); // ✅ أرجع اللون للافتراضي
+    localStorage.removeItem(bgcolorStorageKey);
+    setBackgroundColor('#ffffff'); 
   };
 
   const handleMouseDown = () => {

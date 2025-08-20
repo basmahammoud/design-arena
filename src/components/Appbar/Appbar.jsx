@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AppData } from "../../Data/Data";
 import { useNavigate } from 'react-router-dom';
-import useLogout from "../../hooks/uselogout";
 import ChoseDesign from "../models/chose-design/chose-design";
 import { FaBars, FaTimes } from 'react-icons/fa';
 import UserMenu from "../usermenu/usermenu";

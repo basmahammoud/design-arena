@@ -1,28 +1,46 @@
-import React, { useState } from "react";
-import { Button, Menu, MenuItem } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
-import "./watchlive.css"; 
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import useLives from '../../../hooks/usewatchlives';
+import "./watchlive.css";
 
 const Watchlive = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
   const navigate = useNavigate();
+  const { lives, loading, error } = useLives();
 
-  const handleClick = (event) => {
-      navigate("/lives");
+  const handleClick = (id) => {
+    navigate(`/lives/${id}`); // ممكن تمرر id البث لتفتح بث محدد
   };
 
-  
+  if (loading) return <p>جاري تحميل البثوث...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="container">
-      <button
-        className="custom-button"
-        onClick={handleClick}
-      >
-        watch live 
-      </button>
-     
+      {/* دائماً أول دائرة = Start Stream */}
+      <div className="live-circle" onClick={() => navigate("/lives")}>
+        <img
+          src="https://i.pravatar.cc/100"
+          alt="Start Stream"
+          className="profile-img"
+        />
+        <p className="circle-text">Start Stream</p>
+      </div>
+
+      {/* عرض البثوث المتاحة من API */}
+      {lives.map((live) => (
+        <div
+          key={live.id}
+          className="live-circle"
+          onClick={() => handleClick(live.id)}
+        >
+          <img
+            src={live.thumbnail ||`http://localhost:8000/storage/${live.user.profile_picture}`} 
+            alt={live.title}
+            className="profile-img"
+          />
+    <p className="circle-text">{live.user?.name}</p>
+        </div>
+      ))}
     </div>
   );
 };

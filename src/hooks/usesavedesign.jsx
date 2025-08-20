@@ -5,37 +5,41 @@ import { updateDesign } from '../services/profileserv';
 export const useSaveDesign = () => {
   const [isSaving, setIsSaving] = useState(false);
 
-  const saveDesign = async ({ elements, imageBase64, name = '', designId = null }) => {
+  const saveDesign = async ({ elements, imageBase64, name = '', designId = null, canvasSize, type }) => {
     setIsSaving(true);
     try {
       console.log('✅ designId at save call:', designId);
 
-      if (designId) {
-        // نبني json_data بالطريقة الصحيحة:
-        const jsonWithName = {
-          name,
-          pages: [
-            {
-              elements,                // العناصر هنا مباشرة
-              meta_data: {},           // يمكنك تعبئتها إذا عندك بيانات إضافية
-              // backgroundColor: "#ffffff" // يمكن أن تجعله ديناميكي إذا عندك متغيّر
-            }
-          ],
-          meta_data: {},              // بيانات عامة للتصميم إذا لزم
-        };
+      // نبني json_data ونضيف فيه الأبعاد/النوع
+      const jsonWithMeta = {
+        name,
+        pages: [
+          {
+            elements,    // العناصر
+         meta_data: {
+        type,
+        width: type === "mobile" ? 390 : 1440,
+        height: type === "mobile" ? 844 : 900,
+      }
+          }
+        ],
+        meta_data: { }
+        
+      };
+console.log("📦 jsonWithMeta to save:", JSON.stringify(jsonWithMeta, null, 2));
 
+      if (designId) {
         await updateDesign(designId, {
           name,
-          json_data: jsonWithName,   // لاحظ: نرسل كائن وليس نصّ، لأن stringify يحصل داخل updateDesign
+          json_data: jsonWithMeta,   // نرسل كائن كامل
           image_base64: Array.isArray(imageBase64) ? imageBase64 : [imageBase64],
         });
-
       } else {
-        // إذا تصميم جديد
         await saveWebDesign({
           name,
           elements,
           imageBase64,
+          json_data: jsonWithMeta,   // مهم جدًا عشان الحفظ الجديد
         });
       }
     } catch (error) {

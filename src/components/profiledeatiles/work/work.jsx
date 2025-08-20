@@ -75,28 +75,57 @@ const MyDesign = ({ user, refetchProfile }) => {
         <div className="works-grid">
           {designs.map((design) => (
             <div className="work-item" key={design.id}>
-              {(() => {
-                let imagePaths = [];
-                try {
-                  imagePaths = JSON.parse(design.image_path || '[]');
-                } catch (e) {
-                  console.error('فشل في تحويل image_path إلى JSON:', e);
-                }
+         {(() => {
+  let imagePaths = [];
+  try {
+    imagePaths = JSON.parse(design.image_path || '[]');
+  } catch (e) {
+    console.error('فشل في تحويل image_path إلى JSON:', e);
+  }
 
-                const imageUrl = imagePaths.length > 0 ? `http://localhost:8000/${imagePaths[0]}` : null;
+  const imageUrl = imagePaths.length > 0 ? `http://localhost:8000/${imagePaths[0]}` : null;
 
-                return (
-                  imageUrl ? (
-                    <img
-                      src={imageUrl}
-                      alt={design.name}
-                      className="design-image"
-                    />
-                  ) : (
-                    <div className="no-image">لا توجد صورة</div>
-                  )
-                );
-              })()}
+  // اقرأ النوع من meta_data
+let parsedMeta = {};
+try {
+  const parsed = typeof design.json_data === "string" 
+    ? JSON.parse(design.json_data) 
+    : design.json_data;
+
+  // أول شي نقرأ page meta
+  const pageMeta = parsed?.pages?.[0]?.meta_data || {};
+  // بعدها نقرأ root meta
+  const rootMeta = parsed?.meta_data || {};
+
+  // لو page فيه بيانات استخدمه، لو فاضي استخدم root
+  parsedMeta = Object.keys(pageMeta).length ? pageMeta : rootMeta;
+
+  console.log("🧐 parsedMeta:", parsedMeta);
+
+} catch (e) {
+  console.error("❌ خطأ في parsing json_data:", e);
+}
+
+const type = parsedMeta.type || "web";
+const width = parsedMeta.width || (type === "mobile" ? 390 : 1440);
+const height = parsedMeta.height || (type === "mobile" ? 844 : 900);
+
+console.log("📐 Final size:", { type, width, height });
+
+
+  return (
+    imageUrl ? (
+      <img
+        src={imageUrl}
+        alt={design.name}
+        className={`design-image ${type === "mobile" ? "mobile-preview" : "web-preview"}`}
+      />
+    ) : (
+      <div className="no-image">لا توجد صورة</div>
+    )
+  );
+})()}
+
 
               <div
                 className="edit-work"

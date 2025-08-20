@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 const Subscategory = ({ onCategorySelect }) => {
   const { t } = useTranslation();
 
-  // هنا نستخدم t لترجمة أسماء الفئات
   const categories1 = [
     { name: t('Design'), image: card1 },
     { name: t('Competition'), image: card1 },
