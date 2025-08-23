@@ -4,32 +4,56 @@ import axios from 'axios';
 // تأكد من تفعيل إرسال الكوكيز للتوثيق
 axios.defaults.withCredentials = true;
 
-export const saveWebDesign = async ({ elements, imageBase64, name = '' }) => {
+export const saveWebDesign = async ({ pages, imageBase64, name = '' }) => {
   try {
     const jsonPayload = {
       name: name || 'Untitled Design',
-      meta_data: [], // تقدر تبني بيانات حقيقية لو عندك
-      pages: [
-        {
-          backgroundColor: 16777215, // مثال لون أبيض
-          meta_data: [], // تقدر تضيف بيانات هنا
-          elements: elements
-        }
-      ]
+      pages: Array.isArray(pages) 
+        ? pages.map(p => ({
+            id: p.id,
+            name: p.name,
+            elements: p.elements,
+            backgroundColor: p.backgroundColor,
+            meta_data: {
+              ...p.meta_data,
+              // تأكيد وجود snapshot داخل JSON
+              imageBase64: p.meta_data?.imageBase64 || "",
+            }
+          }))
+        : [],
+      meta_data: {
+        canvasSize: { width: 1200, height: 800 },
+        type: 'web',
+        pagesCount: Array.isArray(pages) ? pages.length : 0,
+        elementsCount: Array.isArray(pages) 
+          ? pages.reduce((sum, page) => sum + (page.elements?.length || 0), 0) 
+          : 0
+      }
     };
 
-    const response = await axios.post('http://localhost:8000/web-designs', {
-      json_data: JSON.stringify(jsonPayload),
-      image_base64: Array.isArray(imageBase64) ? imageBase64 : [imageBase64],
-      name
-    });
+    // استخدام FormData
+    const formData = new FormData();
+    formData.append("json_data", JSON.stringify(jsonPayload));
+    formData.append("name", name);
+
+    //  تأكد من الصور
+    (Array.isArray(imageBase64) ? imageBase64 : [imageBase64])
+      .filter(Boolean)
+      .forEach(img => formData.append("image_base64[]", img));
+
+    const response = await axios.post(
+      "http://localhost:8000/web-designs",
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+
     return response.data;
 
   } catch (error) {
     if (error.response?.status === 422) {
-      console.error('🛑 Validation error:', error.response.data.errors);
+      console.error("🛑 Validation error:", error.response.data.errors);
     } else {
-      console.error('❌ Unexpected error:', error);
+      console.error("❌ Unexpected error:", error);
     }
     throw error;
   }
@@ -60,7 +84,7 @@ export const editAndExportDesign = async (
     formData.append("name", name ?? "");
     formData.append("description", description ?? "");
 
-    // ✅ أضف كل عنصر من مصفوفة الصور base64
+    //  أضف كل عنصر من مصفوفة الصور base64
     if (Array.isArray(image_base64)) {
       image_base64.forEach((img) => {
         formData.append("image_base64[]", img);
@@ -79,7 +103,7 @@ export const editAndExportDesign = async (
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
-        responseType: "blob", // 📥 ضروري إذا كنت تتعامل مع ملف سيتم تحميله من السيرفر
+        responseType: "blob", // ضروري إذا كنت تتعامل مع ملف سيتم تحميله من السيرفر
       }
     );
 

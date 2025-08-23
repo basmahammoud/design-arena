@@ -1,3 +1,4 @@
+// useStreaming.js
 import { useState, useEffect } from 'react';
 import { Room, createLocalScreenTracks } from 'livekit-client';
 import { getStreamToken } from '../services/streaming';
@@ -7,7 +8,7 @@ const useStreaming = () => {
   const [roomName, setRoomName] = useState(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [room, setRoom] = useState(null);
-  const [stream, setStream] = useState(null); //  إضافة حالة للاحتفاظ بالبث
+  const [stream, setStream] = useState(null); //  للاحتفاظ بالبث
 
   useEffect(() => {
     return () => {
@@ -24,40 +25,35 @@ const useStreaming = () => {
       setToken(data.access_token);
       setRoomName(data.room_name);
 
+      // ✅ الاتصال بالغرفة
       const newRoom = new Room();
       await newRoom.connect('wss://digitizer-a4odfmnb.livekit.cloud', data.access_token);
       console.log("✅ تم الاتصال بالغرفة LiveKit بنجاح!");
 
       setRoom(newRoom);
 
-      const tracks = await createLocalScreenTracks({ audio: true });
-
-      // ✅ استخراج MediaStream من التراكات
-      const mediaStream = new MediaStream();
-      tracks.forEach(track => {
-        mediaStream.addTrack(track.mediaStreamTrack);
+      // ✅ إنشاء تراك للشاشة + الصوت
+      const tracks = await createLocalScreenTracks({
+        audio: true,
+        video: true,
       });
-      setStream(mediaStream); // ✅ حفظ الـ stream في الحالة
 
+      // ✅ حفظ MediaStream
+      const mediaStream = new MediaStream();
+      tracks.forEach(track => mediaStream.addTrack(track.mediaStreamTrack));
+      setStream(mediaStream);
+
+      // ✅ نشر جميع التراكات بدون شروط
       for (const track of tracks) {
-        console.log("🔍 Trying to publish track:", track.kind, track.name || "");
-
-        if (track.kind === "video" && (track.name === "screen" || track.source === "screen_share")) {
-          await newRoom.localParticipant.publishTrack(track);
-          console.log("✅ تم نشر شاشة الفيديو بنجاح");
-        } else if (track.kind === "audio") {
-          await newRoom.localParticipant.publishTrack(track);
-          console.log("✅ تم نشر صوت الشاشة بنجاح");
-        } else {
-          console.warn("❌ نوع التراك غير مدعوم للنشر:", track.kind);
-        }
+        await newRoom.localParticipant.publishTrack(track);
+        console.log(`✅ Published ${track.kind} track`, track);
       }
 
       setIsStreaming(true);
     } catch (error) {
       console.error('❌ فشل بدء البث:', error);
       if (error?.message?.includes("permissions denied")) {
-        console.warn("⚠️ تحقق من صلاحيات التوكن، خاصة can_publish_sources");
+        console.warn("⚠️ تحقق من صلاحيات التوكن، خاصة canPublishSources");
       }
     }
   };
@@ -90,7 +86,7 @@ const useStreaming = () => {
     isStreaming,
     startStream,
     stopStream,
-    stream, // ✅ أضف هذا للواجهة
+    stream,
   };
 };
 

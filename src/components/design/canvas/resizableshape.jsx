@@ -37,7 +37,6 @@ const ResizableShape = ({ shapeRef, isSelected, onTransformEnd, type }) => {
         let newProps;
 
         if (type === 'oval') {
-          // للشكل البيضاوي نحسب نصف العرض والطول
           newProps = {
             x: node.x(),
             y: node.y(),

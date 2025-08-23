@@ -9,12 +9,12 @@ const Streaming = () => {
   useEffect(() => {
     if (videoRef.current && stream) {
       const hasVideo = stream.getVideoTracks().length > 0;
-      console.log("🎥 هل يوجد فيديو بالبث؟", hasVideo);
+      console.log("هل يوجد فيديو بالبث؟", hasVideo);
 
       if (hasVideo) {
         videoRef.current.srcObject = stream;
       } else {
-        console.warn("⚠️ لا يوجد تراك فيديو في MediaStream");
+        console.warn(" لا يوجد تراك فيديو في MediaStream");
       }
     }
   }, [stream]);
@@ -23,7 +23,7 @@ const Streaming = () => {
     <div className={isStreaming ? 'streaming-screen' : 'stream-container'}>
       {!isStreaming ? (
         <button className="stream-button" onClick={startStream}>
-          start streaming 🎥
+          start streaming 
         </button>
       ) : (
         <div>

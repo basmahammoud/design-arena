@@ -9,7 +9,7 @@ const useSavedVideos = () => {
   const fetchSaved = async () => {
     try {
       const videos = await getSavedVideos();
-      console.log('Fetched saved videos:', videos); // ✅ تحقق من شكل البيانات هنا
+      console.log('Fetched saved videos:', videos); //تحقق من شكل البيانات 
           setSavedVideos(Array.isArray(videos.videos) ? videos.videos : []);
     } catch (err) {
       console.error('Error fetching saved videos', err);

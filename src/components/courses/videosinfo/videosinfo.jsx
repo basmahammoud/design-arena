@@ -29,7 +29,6 @@ const Videosinfo = () => {
   };
 
   const handleVideoClick = (e, videoId) => {
-    // منع الانتقال إذا كان الكورس مدفوع وغير مدفوع
     if (Number(sub?.is_paid) === 1 && !hasAccess) {
       e.preventDefault();
       handlePaymentRedirect();

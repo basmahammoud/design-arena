@@ -82,7 +82,6 @@ const Home = () => {
         })}
       </div>
 
-      {/* Modal */}
       {selectedDesign && (
         <div className="modal-overlay" onClick={() => setSelectedDesign(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

@@ -1,4 +1,3 @@
-// components/ui/LoadingSpinner.jsx
 import React from 'react';
 import './loadingspinner.css';
 

@@ -22,6 +22,7 @@ import Lives from './components/streming/lives/lives';
 import ViewerRoom from './components/streming/ViewerRoom/ViewerRoom';
 import PublisherRoom from './components/streming/PublisherRoom';
 import PublisherPageWrapper from './components/streming/PublisherPageWrapper';
+import CompetitionDetails from './components/Home/compdetails/compdetails';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/verify" element={<Verify />}/>
               <Route path="/editor" element={<Editor />} />
+              <Route path="/design/:id" element={<Editor />} />
               <Route path="/preview" element={<Preview />} />
              
               {/* نغلف الصفحات التي تحتاج Sidebar بمكون Layout */}
@@ -49,6 +51,7 @@ function App() {
              <Route path="/viewer-token" element={<Layout><ViewerRoom /></Layout>} />
              {/* <Route path="/Publisher" element={<Layout><PublisherRoom /></Layout>} /> */}
               <Route path="/publisher" element={<PublisherPageWrapper />} />
+              <Route path="/competitions/:id" element={<Layout><CompetitionDetails /></Layout>} />
 
 
               {/* <Route path="/navpage/*" element={<Layout><Navpage /></Layout>} /> */}

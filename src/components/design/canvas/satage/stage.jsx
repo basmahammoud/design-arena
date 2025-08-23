@@ -36,7 +36,7 @@ if (e.target === e.target.getStage() || e.target.className === 'Rect') {
       onMouseUp={handleMouseUp}
     >
       <Layer>
-          {/* ✅ مستطيل الخلفية الأبيض داخل مساحة العمل */}
+          {/*  مستطيل الرسم(التصميم)*/}
         <Rect
           x={0}
           y={0}

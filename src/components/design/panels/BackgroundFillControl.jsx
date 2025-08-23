@@ -1,4 +1,3 @@
-// src/components/PropertiesPanel/backgroundfillcontrol
 import React from 'react';
 
 function rgbaString({ r, g, b, a }) {

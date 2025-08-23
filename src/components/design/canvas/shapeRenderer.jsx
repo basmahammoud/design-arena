@@ -11,8 +11,7 @@ import {
 import ResizableShape from '../canvas/resizableshape';
 import useImage from 'use-image';
 
-
-//  مكون خاص برسم الصور
+//رسم الصور
 const ImageElement = ({ element, isSelected, onSelect, onDragEnd, onTransformEnd }) => {
   const [image] = useImage(element.src);
   const shapeRef = useRef();
@@ -183,7 +182,6 @@ const ShapeRenderer = ({
           );
         }
 
-        // 🟢 بقية العناصر حسب النوع
         switch (el.type) {
           case 'rect':
             return (

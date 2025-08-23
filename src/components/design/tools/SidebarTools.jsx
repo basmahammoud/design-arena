@@ -33,7 +33,6 @@ const SidebarTools = ({ onAddElement, setElements, setBackgroundColor }) => {
   return (
     <div className="main-layout">
       <div className="sidebar">
-        {/* أدوات أساسية */}
         <div className="tool-group">
           <button title="نص" onClick={() => onAddElement('text')}>
             <MdTextFields />
@@ -46,7 +45,6 @@ const SidebarTools = ({ onAddElement, setElements, setBackgroundColor }) => {
           </button>
         </div>
 
-        {/* زر الأشكال */}
         <div className="tool-group" ref={shapesRef}>
           <button title="أشكال" onClick={() => setShowShapes(!showShapes)}>
             <PiShapesThin />
@@ -62,7 +60,6 @@ const SidebarTools = ({ onAddElement, setElements, setBackgroundColor }) => {
           )}
         </div>
 
-        {/* زر الخطوط */}
         <div className="tool-group" ref={linesRef}>
           <button title="خطوط" onClick={() => setShowLines(!showLines)}>
             <PiLineSegmentBold />
@@ -76,7 +73,6 @@ const SidebarTools = ({ onAddElement, setElements, setBackgroundColor }) => {
           )}
         </div>
 
-        {/* زر لتلوين الخلفية */}
         <input
           type="color"
           title="لون الخلفية"
@@ -90,7 +86,6 @@ const SidebarTools = ({ onAddElement, setElements, setBackgroundColor }) => {
           }}
         />
 
-        {/* زر رفع صورة */}
         <UploadImage
           onImageAdd={(imageSrc) => handleImageAdd(imageSrc, setElements)}
         />

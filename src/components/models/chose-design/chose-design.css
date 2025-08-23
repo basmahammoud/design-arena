@@ -1,0 +1,23 @@
+.modal-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.25);
+  padding: 1.5rem;
+  border-radius: 8px;
+  min-width: 300px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.choose-btn {
+  background-color: #830061 !important;
+  color: #fff !important;
+  margin-top: 10px !important;
+}
+
+.choose-btn:hover {
+  background-color: #6b004f !important;
+}
