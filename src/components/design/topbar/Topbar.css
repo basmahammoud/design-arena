@@ -95,3 +95,31 @@
     background-color: #9a6a9d;
 
 }
+.page-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.add-page {
+  background-color: #4CAF50;
+}
+
+.add-page:hover {
+  background-color: #45a049;
+}
+
+.delete-page {
+  background-color: #f44336;
+}
+
+.delete-page:hover {
+  background-color: #d32f2f;
+}

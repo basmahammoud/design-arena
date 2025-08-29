@@ -47,8 +47,9 @@ const SaveButton = ({
             setCurrentPageIndex(idx);
             setElements(Array.isArray(page.elements) ? page.elements : []);
 
-            await new Promise((r) => setTimeout(r, 100));
-            stage.batchDraw?.();
+            await new Promise((r) => setTimeout(r, 200));
+             stage.batchDraw?.();
+             await new Promise((r) => requestAnimationFrame(r));
 
             const snapshot = stage.toDataURL({ pixelRatio: 2 });
 

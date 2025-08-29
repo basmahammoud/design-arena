@@ -8,7 +8,7 @@ import { LuRectangleHorizontal, LuPencilLine } from 'react-icons/lu';
 import { PiShapesThin } from "react-icons/pi";
 import { PiLineSegmentBold } from "react-icons/pi";
 import UploadImage from '../canvas/uploadimg/uploadimage';
-import { handleImageAdd } from '../../controller/EditorController';
+import { handleImageAdd } from '../../controller/EditorControls';
 
 const SidebarTools = ({ onAddElement, setElements, setBackgroundColor }) => {
   const [showShapes, setShowShapes] = useState(false);

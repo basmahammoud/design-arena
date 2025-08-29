@@ -15,48 +15,42 @@ const ResizableShape = ({ shapeRef, isSelected, onTransformEnd, type }) => {
   return (
     <Transformer
       ref={transformerRef}
+      rotateEnabled={true}
+      keepRatio={false}
       boundBoxFunc={(oldBox, newBox) => {
-        // منع التصغير الزائد
-        if (newBox.width < 5 || newBox.height < 5) return oldBox;
+        if (newBox.width < 5 || newBox.height < 5) return oldBox; // منع التصغير المبالغ
         return newBox;
       }}
-      onTransformEnd={() => {
-        const node = shapeRef.current;
-        if (!node) return;
+    onTransformEnd={() => {
+  const node = shapeRef.current;
+  if (!node) return;
 
-        const scaleX = node.scaleX();
-        const scaleY = node.scaleY();
+  const scaleX = node.scaleX();
+  const scaleY = node.scaleY();
 
-        // Reset scale to avoid accumulation
-        node.scaleX(1);
-        node.scaleY(1);
+  node.scaleX(1);
+  node.scaleY(1);
 
-        const width = node.width() * scaleX;
-        const height = node.height() * scaleY;
+  let newProps = {
+    x: node.x(),
+    y: node.y(),
+    rotation: node.rotation(),
+  };
 
-        let newProps;
+  if (type === "circle") {
+    newProps.radius = (node.width() * scaleX) / 2;
+  } else if (type === "ellipse") {
+    newProps.radiusX = (node.width() * scaleX) / 2;
+    newProps.radiusY = (node.height() * scaleY) / 2;
+  } else {
+    newProps.width = Math.max(5, node.width() * scaleX);
+    newProps.height = Math.max(5, node.height() * scaleY);
+  }
 
-        if (type === 'oval') {
-          newProps = {
-            x: node.x(),
-            y: node.y(),
-            radiusX: width / 2,
-            radiusY: height / 2,
-            rotation: node.rotation(),
-          };
-        } else {
-          // لبقية الأشكال
-          newProps = {
-            x: node.x(),
-            y: node.y(),
-            width,
-            height,
-            rotation: node.rotation(),
-          };
-        }
+  // هنا أهم شيء: أرسل newProps إلى الـ state
+  onTransformEnd?.(newProps);
+}}
 
-        onTransformEnd?.(newProps);
-      }}
     />
   );
 };

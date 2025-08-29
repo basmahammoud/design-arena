@@ -1,7 +1,6 @@
 // src/services/webDesignService.js
 import axios from 'axios';
 
-// تأكد من تفعيل إرسال الكوكيز للتوثيق
 axios.defaults.withCredentials = true;
 
 export const saveWebDesign = async ({ pages, imageBase64, name = '' }) => {
@@ -16,7 +15,6 @@ export const saveWebDesign = async ({ pages, imageBase64, name = '' }) => {
             backgroundColor: p.backgroundColor,
             meta_data: {
               ...p.meta_data,
-              // تأكيد وجود snapshot داخل JSON
               imageBase64: p.meta_data?.imageBase64 || "",
             }
           }))
@@ -31,12 +29,10 @@ export const saveWebDesign = async ({ pages, imageBase64, name = '' }) => {
       }
     };
 
-    // استخدام FormData
     const formData = new FormData();
     formData.append("json_data", JSON.stringify(jsonPayload));
     formData.append("name", name);
 
-    //  تأكد من الصور
     (Array.isArray(imageBase64) ? imageBase64 : [imageBase64])
       .filter(Boolean)
       .forEach(img => formData.append("image_base64[]", img));
