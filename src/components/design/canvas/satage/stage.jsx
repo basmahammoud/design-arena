@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Stage, Layer, Rect } from 'react-konva';
 import ShapeRenderer from '../shapeRenderer';
 
 const CanvasStage = ({
   stageRef,
   canvasSize,
-  pages ,      
-  setPages,          
+  pages,
   currentPageIndex,
-  elements,
+  updateElements,
   handleMouseDown,
   handleMouseMove,
   handleMouseUp,
@@ -18,7 +17,7 @@ const CanvasStage = ({
   selectedElementId,
   clearSelection,
   backgroundColor,
-  scale, 
+  scale,
   deleteSelectedElement,
 }) => {
   const handleStageClick = (e) => {
@@ -26,60 +25,51 @@ const CanvasStage = ({
       clearSelection();
     }
   };
-  
+
+  const elements = (pages[currentPageIndex]?.elements || []).filter(Boolean);
+
   return (
     <Stage
       ref={stageRef}
       width={canvasSize.width}
       height={canvasSize.height}
       className="canvas-wrapper"
-      scaleX={scale}   // ✅ التكبير على X
-      scaleY={scale}   // ✅ التكبير على Y
-      x={0}            // ممكن تعدل لاحقاً لو تحب تعمل Center
+      scaleX={scale}
+      scaleY={scale}
+      x={0}
       y={0}
-      draggable={false} // منع تحريك الكانفس بالغلط
+      draggable={false}
       onMouseDown={(e) => {
-        handleStageClick(e);    
-        handleMouseDown(e);     
+        handleStageClick(e);
+        handleMouseDown(e);
       }}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
       <Layer>
-        {/* ✅ خلفية الكانفس */}
         <Rect
           x={0}
           y={0}
           width={canvasSize.width}
           height={canvasSize.height}
-          fill={backgroundColor}
+          fill={typeof backgroundColor === 'string' ? backgroundColor : '#ffffff'}
           shadowBlur={10}
           cornerRadius={8}
         />
 
-    <ShapeRenderer
-  elements={pages[currentPageIndex]?.elements || []}   
-  handleSelect={handleSelect}
-  handleDragEnd={handleDragEnd}
-  handleTextEdit={handleTextEdit}
-  selectedId={selectedElementId}
-  onDelete={deleteSelectedElement}
- setElements={(updater) => {
-   setPages((prevPages) => {
-     const newPages = [...prevPages];
-     newPages[currentPageIndex] = {
-       ...newPages[currentPageIndex],
-       elements: updater(newPages[currentPageIndex].elements),
-     };
-     return newPages;   
-    });
- }}
-/>
-
-
+              <ShapeRenderer
+          elements={elements}
+          handleSelect={handleSelect}
+          handleDragEnd={handleDragEnd}       // مرتبط مسبقًا بـ updateElements
+          handleTextEdit={handleTextEdit}     // مرتبط مسبقًا بـ updateElements
+          selectedId={selectedElementId}
+          onDelete={deleteSelectedElement}
+          setElements={updateElements}        // الدالة الأساسية لتحديث العناصر
+        />
       </Layer>
     </Stage>
   );
 };
 
 export default CanvasStage;
+

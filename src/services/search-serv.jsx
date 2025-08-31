@@ -7,6 +7,6 @@ export const getsearch = async () => {
 
 // بحث عن تصميم
 export const getDesignSearch = async (query) => {
-  const res = await axios.get(`http://localhost:8000/designs/search?query=${query}`);
+  const res = await axios.get(`http://localhost:8000/designs/search?q=${query}`);
   return res.data;
 };

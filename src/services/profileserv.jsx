@@ -4,7 +4,7 @@ axios.defaults.withCredentials = true;
 axios.defaults.baseURL = 'http://localhost:8000'; 
 
 export const profile = async () => {
-  const token = localStorage.getItem('token'); // جلب التوكن من التخزين
+  const token = localStorage.getItem('token'); 
   try {
     const res = await axios.get('http://localhost:8000/profile', {
       headers: {
@@ -31,36 +31,54 @@ export const Edite_profile = async (data) => {
   }
 };
 
-export const updateDesign = async (designId, { json_data, 
-  image_base64, 
-  name = null, 
-  description = null }) => {
+export const updateDesign = async (
+  designId,
+  { json_data, image_base64 = [], name = null, description = null }
+) => {
   try {
-    const formData = new FormData();
-    formData.append('json_data', JSON.stringify(json_data));
-    formData.append('name', name ?? '');
-    formData.append('description', description ?? '');
+    // التأكد من json_data
+    if (!json_data || typeof json_data !== "object") {
+      json_data = {};
+    }
+    if (!Array.isArray(json_data.pages)) {
+      json_data.pages = [];
+    }
+    if (!json_data.meta_data || typeof json_data.meta_data !== "object") {
+      json_data.meta_data = {};
+    }
 
-    image_base64.forEach((base64, index) => {
-      formData.append(`image_base64[${index}]`, base64);
+    const formData = new FormData();
+    formData.append("json_data", JSON.stringify(json_data));
+
+    if (name !== null) formData.append("name", name);
+    if (description !== null) formData.append("description", description);
+
+    // التعامل مع الصور
+    if (!Array.isArray(image_base64)) image_base64 = [image_base64];
+    image_base64.forEach((base64) => {
+      if (base64 && base64.startsWith("data:image/")) {
+        formData.append("image_base64[]", base64);
+      }
     });
 
-    const token = localStorage.getItem('token'); // إذا عندك توكن للحماية
+    const token = localStorage.getItem("token");
 
     const response = await axios.post(
       `http://localhost:8000/designs/${designId}/update`,
       formData,
       {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
-  console.log("re",response);
+
     return response.data;
   } catch (error) {
-    console.error('❌ Unexpected update error:', error.response?.data || error.message);
+    console.error(
+      "❌ Unexpected update error:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };

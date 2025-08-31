@@ -18,22 +18,40 @@ const MyDesign = ({ user, refetchProfile }) => {
   const { designs, loading, error } = useUserDesigns(userId);
   const { exportToFigma, loading: exportLoading, error: exportError } = useExportToFigma();
 
-  //  هذا خاص بالتعديل
   const [selectedDesign, setSelectedDesign] = useState(null);
-  //  وهذا خاص بعرض الصفحات
   const [selectedPagesDesign, setSelectedPagesDesign] = useState(null);
 
-  const handleSave = async ({ name, json_data }) => {
-    try {
-      await handleUpdateDesign(selectedDesign.id, { name, json_data });
-      alert('تم الحفظ بنجاح');
-      setSelectedDesign(null);
-      if (refetchProfile) refetchProfile();
-    } catch (err) {
-      console.error('خطأ أثناء الحفظ:', err);
-      alert('حدث خطأ أثناء الحفظ');
+const handleSave = async ({ name, json_data, image_base64 }) => {
+  try {
+    let finalImages = [];
+
+    if (Array.isArray(image_base64) && image_base64.length > 0) {
+      finalImages = image_base64;
+    } else {
+      if (selectedDesign?.image_path) {
+        const oldImages = JSON.parse(selectedDesign.image_path || "[]");
+        finalImages = oldImages; 
+      }
     }
-  };
+
+    const dataToSend = { 
+      name, 
+      json_data, 
+      image_base64: finalImages
+    };
+
+    await handleUpdateDesign(selectedDesign.id, dataToSend);
+    alert("تم الحفظ بنجاح");
+    setSelectedDesign(null);
+    if (refetchProfile) refetchProfile();
+  } catch (err) {
+    console.error("خطأ أثناء الحفظ:", err);
+    alert("حدث خطأ أثناء الحفظ");
+  }
+};
+
+
+
 
   if (!userId) return <p>جاري تحميل الملف الشخصي...</p>;
 
@@ -54,7 +72,7 @@ const MyDesign = ({ user, refetchProfile }) => {
             try {
               imagePaths = JSON.parse(design.image_path || '[]');
             } catch {}
-              console.log('design.id', design.id, 'image_path', design.image_path);
+              // console.log('design.id', design.id, 'image_path', design.image_path);
 
             const imageUrl = imagePaths.length > 0 ? `http://localhost:8000/${imagePaths[0]}` : null;
 
@@ -62,7 +80,7 @@ const MyDesign = ({ user, refetchProfile }) => {
               <div 
                 className="work-item" 
                 key={design.id}
-                onClick={() => setSelectedPagesDesign(design)} //  الضغط على التصميم يفتح الصفحات
+                onClick={() => setSelectedPagesDesign(design)} 
               >
                 {imageUrl ? (
                   <img src={imageUrl} alt={design.name} className="design-image" />
@@ -74,8 +92,8 @@ const MyDesign = ({ user, refetchProfile }) => {
                 <div 
                   className="edit-work" 
                   onClick={(e) => {
-                    e.stopPropagation(); // منع فتح الصفحات
-                    setSelectedDesign(design); //  فتح نافذة التعديل فقط
+                    e.stopPropagation();
+                    setSelectedDesign(design); 
                   }}
                   title="تعديل التصميم"
                 >
@@ -86,7 +104,7 @@ const MyDesign = ({ user, refetchProfile }) => {
                 <button
                   className="figma-button"
                   onClick={(e) => {
-                    e.stopPropagation(); // منع فتح الصفحات
+                    e.stopPropagation(); 
                     exportToFigma(design.id);
                   }}
                   disabled={exportLoading}

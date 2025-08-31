@@ -1,4 +1,3 @@
-// hooks/useShow.jsx
 import { useState, useEffect } from "react";
 import { show } from "../services/competitionserv";
 

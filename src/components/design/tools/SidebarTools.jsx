@@ -16,7 +16,6 @@ const SidebarTools = ({ onAddElement, setElements, setBackgroundColor }) => {
   const shapesRef = useRef(null);
   const linesRef = useRef(null);
 
-  // إغلاق القوائم عند الضغط خارجها
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (shapesRef.current && !shapesRef.current.contains(e.target)) {
@@ -86,9 +85,10 @@ const SidebarTools = ({ onAddElement, setElements, setBackgroundColor }) => {
           }}
         />
 
-        <UploadImage
-          onImageAdd={(imageSrc) => handleImageAdd(imageSrc, setElements)}
-        />
+     <UploadImage
+  onImageAdd={(imageSrc) => handleImageAdd(imageSrc, setElements)}
+/>
+
       </div>
     </div>
   );

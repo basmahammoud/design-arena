@@ -1,29 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemText from '@mui/material/ListItemText';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import { notifications } from '../../services/Notification';
-import Divider from '@mui/material/Divider';
+import React, { useState } from "react";
+import IconButton from "@mui/material/IconButton";
+import Badge from "@mui/material/Badge";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemText from "@mui/material/ListItemText";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import Divider from "@mui/material/Divider";
+import Button from "@mui/material/Button";
+import { useNotifications } from "../../hooks/useNotification";
 
 const NotificationsMenu = () => {
-  const [notificationsList, setNotificationsList] = useState([]);
+  const { notifications, loading, error, markAllRead } = useNotifications();
   const [anchorEl, setAnchorEl] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await notifications();
-        // console.log('🔥 Notifications data:', data);
-        setNotificationsList(data?.data ?? data ?? []);
-      } catch (err) {
-        console.error('خطأ في جلب الإشعارات:', err);
-      }
-    };
-    fetchData();
-  }, []);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -41,7 +29,7 @@ const NotificationsMenu = () => {
         aria-haspopup="true"
         onClick={handleClick}
       >
-        <Badge badgeContent={notificationsList?.length ?? 0} color="error">
+        <Badge badgeContent={notifications?.length ?? 0} color="error">
           <NotificationsIcon />
         </Badge>
       </IconButton>
@@ -53,16 +41,28 @@ const NotificationsMenu = () => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <h4 style={{ margin: '8px 16px 0' }}>🔔 إشعاراتك</h4>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 16px" }}>
+          <h4 style={{ margin: 0 }}>🔔 إشعاراتك</h4>
+          {notifications?.length > 0 && (
+            <Button size="small" onClick={markAllRead}>
+              تمييز الكل كمقروء
+            </Button>
+          )}
+        </div>
         <Divider />
-        {notificationsList?.length === 0 ? (
+
+        {loading ? (
+          <MenuItem disabled>⏳ جاري التحميل...</MenuItem>
+        ) : error ? (
+          <MenuItem disabled>⚠️ حدث خطأ أثناء جلب الإشعارات</MenuItem>
+        ) : notifications?.length === 0 ? (
           <MenuItem onClick={handleClose}>لا توجد إشعارات</MenuItem>
         ) : (
-          notificationsList.map((n) => (
+          notifications.map((n) => (
             <MenuItem key={n.id} onClick={handleClose}>
               <ListItemText
-                primary={n.data?.title}
-                secondary={n.data?.caption}
+                primary={n.data?.title ?? "بدون عنوان"}
+                secondary={n.data?.caption ?? ""}
               />
             </MenuItem>
           ))

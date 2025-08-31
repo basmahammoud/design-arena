@@ -1,16 +1,8 @@
 .home-container {
   padding: 20px;
-  /* background-color: #f8f8f8; */
   background-color: #ffffff;
   min-height: 100vh;
   font-family: Arial, sans-serif;
-}
-
-.home-title {
-  text-align: center;
-  font-size: 32px;
-  margin-bottom: 30px;
-  color: #333;
 }
 
 .design-grid {
@@ -22,15 +14,17 @@
 }
 
 .design-card {
-  background-color: rgba(224, 182, 220, 0.315);
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border-radius: 6px;
   overflow: hidden;
   transition: transform 0.2s;
+  position: relative;
+  padding-bottom: 10px;
 }
 
 .design-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
 }
 
 .design-image {
@@ -40,11 +34,45 @@
 }
 
 .design-title {
-  padding: 15px;
-  font-size: 18px;
-  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #222;
+  margin: 10px;
+}
+
+.design-owner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 10px;
+  cursor: pointer;
+}
+
+.owner-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.owner-name {
+  font-size: 14px;
   color: #555;
 }
+
+.design-stats {
+  display: flex;
+  gap: 15px;
+  margin: 8px 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.design-stats svg {
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
 .edit-button {
   position: absolute;
   top: 8px;

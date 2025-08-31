@@ -1,40 +1,61 @@
-import React, { useEffect, useState } from 'react';
-import { notifications } from '../services/Notification'; 
+import { useEffect, useState } from "react";
+import { getNotifications, markAllAsRead, getNotificationById } from "../services/Notification";
 
-const Notifications = () => {
-  const [notificationsList, setNotificationsList] = useState([]);
+export const useNotifications = () => {
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-useEffect(() => {
-  const fetchData = async () => {
+  const fetchNotifications = async () => {
+    setLoading(true);
     try {
-      const data = await notifications();
+      const data = await getNotifications();
 
-      // 🔥 تحقق هنا من شكل البيانات
-      console.log('DATA:', data);
-
-      // ثم عينها بشكل صحيح
-      setNotificationsList(data.data ?? data); 
+      if (Array.isArray(data)) {
+        setNotifications(data);
+      } else if (Array.isArray(data.notifications)) {
+        setNotifications(data.notifications);
+      } else if (Array.isArray(data.data)) {
+        setNotifications(data.data);
+      } else {
+        setNotifications([]); // fallback
+      }
     } catch (err) {
-      console.error('خطأ في جلب الإشعارات:', err);
+      setError(err);
+      console.error("خطأ في جلب الإشعارات:", err);
+    } finally {
+      setLoading(false);
     }
   };
-  fetchData();
-}, []);
 
+  const markAllRead = async () => {
+    try {
+      await markAllAsRead();
+      fetchNotifications();
+    } catch (err) {
+      console.error("خطأ في تمييز الإشعارات كمقروءة:", err);
+    }
+  };
 
-  return (
-    <div>
-      <h2>🔔 إشعاراتك</h2>
-      <ul>
-        {notificationsList.map((n) => (
-          <li key={n.id}>
-            <strong>{n.data.title}</strong> 
-            <p>{n.data.caption}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+  const fetchNotificationById = async (id) => {
+    try {
+      const data = await getNotificationById(id);
+      return data;
+    } catch (err) {
+      console.error("خطأ في جلب إشعار محدد:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  return {
+    notifications,
+    loading,
+    error,
+    fetchNotifications,
+    markAllRead,
+    fetchNotificationById,
+  };
 };
-
-export default Notifications;

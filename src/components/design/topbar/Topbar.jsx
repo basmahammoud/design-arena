@@ -29,38 +29,77 @@ const handleSendToCompetition = async () => {
   }
 
   if (!pages || !Array.isArray(pages) || pages.length === 0) {
-    alert("📛 لا توجد صفحات لإرسالها");
+    alert("لا توجد صفحات لإرسالها");
     return;
   }
 
-  // حساب عدد العناصر
   const elementsCount = pages.reduce(
     (sum, page) => sum + (Array.isArray(page.elements) ? page.elements.length : 0),
     0
   );
 
-  // تجهيز الصفحات مثل الحفظ
-  const formattedPages = pages.map((page, index) => ({
-    id: page.id || Date.now() + index,
-    name: page.name || `صفحة ${index + 1}`,
-    elements: Array.isArray(page.elements) ? page.elements : [],
-    backgroundColor: typeof page.backgroundColor === "number" ? page.backgroundColor : 16777215,
-    meta_data: {
-      ...((page.meta_data && typeof page.meta_data === "object") ? page.meta_data : {}),
-      imageBase64: page.meta_data?.imageBase64 || "",
-    },
-  }));
+  const formattedPages = [];
+  const imageBase64Array = [];
 
-  // صورة من الكانفاس base64
-  const uri = stageRef.current.toDataURL({ pixelRatio: 2 });
-  const previewImage = uri.replace(/^data:image\/\w+;base64,/, "");
+  // حفظ الصفحة الحالية والعناصر الحالية لاستعادتها لاحقاً
+  const currentPage = currentPageIndex;
+  const currentElements = elements;
 
-  // JSON النهائي
+  // 🔹 لوب على كل الصفحات لأخذ screenshot لكل صفحة
+  for (let i = 0; i < pages.length; i++) {
+    const page = pages[i];
+
+    let base64 = "";
+
+    // إذا عندك stageRef ودالة لتغيير الصفحة
+    if (stageRef?.current) {
+      // 👇 غير إلى الصفحة الحالية في اللوب
+      setCurrentPageIndex(i); // غير إلى الصفحة الحالية
+      setElements(page.elements); // ضع عناصر الصفحة الحالية
+
+      // انتظر حتى يتم تحديث الـ Stage
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      // تأكد من أن الـ Stage جاهز بأخذ screenshot
+      if (stageRef.current) {
+        try {
+          const uri = stageRef.current.toDataURL({ 
+            pixelRatio: 2,
+            mimeType: 'image/png',
+            quality: 0.9
+          });
+          base64 = uri;
+        } catch (error) {
+          console.error("Error taking screenshot for page", i, error);
+        }
+      }
+    }
+
+    imageBase64Array.push(base64);
+
+    formattedPages.push({
+      id: page.id || Date.now() + i,
+      name: page.name || `صفحة ${i + 1}`,
+      elements: Array.isArray(page.elements) ? page.elements : [],
+      backgroundColor: typeof page.backgroundColor === "number" ? page.backgroundColor : 16777215,
+      meta_data: {
+        ...((page.meta_data && typeof page.meta_data === "object") ? page.meta_data : {}),
+        imageBase64: base64,
+      }
+    });
+  }
+
+  // استعد الصفحة والعناصر الأصلية
+  setCurrentPageIndex(currentPage);
+  setElements(currentElements);
+
+  const previewImage = imageBase64Array[0] || "";
+
   const jsonWithMeta = {
-    name: `Design_${designId}`,
+    name: `Design_${designId || "Untitled"}`,
     pages: formattedPages,
     meta_data: {
-      canvasSize,
+      canvasSize: canvasSize || { width: 1200, height: 800 },
       type: "competition",
       pagesCount: formattedPages.length,
       elementsCount,
@@ -68,32 +107,41 @@ const handleSendToCompetition = async () => {
     }
   };
 
-  // الصور المجمعة
-  const imageBase64Array = formattedPages
-    .map(p => p.meta_data?.imageBase64)
-    .filter(Boolean);
-
-  // إضافة صورة الغلاف أول المصفوفة
-  if (previewImage) {
-    imageBase64Array.unshift(previewImage);
-  }
-
-  // formData
   const formData = new FormData();
   formData.append("json_data", JSON.stringify(jsonWithMeta));
   formData.append("description", "مشاركتي في المسابقة");
-  imageBase64Array.forEach(img => formData.append("image_base64[]", img));
+  formData.append("name", jsonWithMeta.name);
 
-  console.log("📦 formData to send:");
-  console.log("json_data:", jsonWithMeta);
-  console.log("images count:", imageBase64Array.length);
+  // 🔹 أضف كل صور Base64 (حتى الفارغة منها للحفاظ على الترتيب)
+  imageBase64Array.forEach(img => {
+    formData.append("image_base64[]", img || "");
+  });
 
-  const response = await joinCompetition(competitionId, formData);
+  // Debugging
+  console.log("Sending pages:", formattedPages.length);
+  console.log("Images count:", imageBase64Array.length);
+  console.log("First image exists:", !!imageBase64Array[0]);
+  console.log("Last image exists:", !!imageBase64Array[imageBase64Array.length - 1]);
 
-  if (response) {
-    alert("تم إرسال التصميم للمسابقة بنجاح 🎉");
+  try {
+    const response = await joinCompetition(competitionId, formData);
+    if (response) {
+      alert("تم إرسال التصميم للمسابقة بنجاح 🎉");
+    }
+  } catch (error) {
+    console.error("❌ Error sending design:", error);
+    if (error.response?.status === 422) {
+      console.error("Validation errors:", error.response.data.errors);
+      alert("خطأ في التحقق: " + JSON.stringify(error.response.data.errors));
+    } else {
+      alert("حدث خطأ أثناء إرسال التصميم للمسابقة.");
+    }
   }
 };
+
+
+
+
 
   return (
     <div className="editor-topbar">
@@ -123,18 +171,18 @@ const handleSendToCompetition = async () => {
   setCurrentPageIndex={setCurrentPageIndex}  
 />
 
-        <button className="preview-btn" onClick={onPreview} title="معاينة التصميم">
+        {/* <button className="preview-btn" onClick={onPreview} title="معاينة التصميم">
           <FaEye />
-        </button>
+        </button> */}
 
         <button 
           className="competition-btn" 
           onClick={handleSendToCompetition} 
           disabled={loading}
-          title="إرسال إلى المسابقة"
+          title=" send to competition "
         >
           <FaTrophy />
-          {loading ? " جاري الإرسال..." : " Send to Competition"}
+          {loading ? "  sending..." : " Send to Competition"}
         </button>
 
         <Streaming />

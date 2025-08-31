@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { AppData } from "../../Data/Data";
 import { useNavigate } from 'react-router-dom';
 import ChoseDesign from "../models/chose-design/chose-design";
@@ -10,6 +10,7 @@ import NotificationsMenu from '../Notification/NotificationsMenu';
 import useLanguage from "../../hooks/uselang";
 import { FaGlobe } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import { AuthContext } from "../../hooks/useAuth"; 
 
 const Appbar = ({ onClose }) => {
   const { t } = useTranslation();
@@ -27,6 +28,9 @@ const Appbar = ({ onClose }) => {
 
   const navigate = useNavigate();
   const { user, loading } = useProfile();
+  const { currentUser } = useContext(AuthContext) || {}; 
+
+  const menuItems = typeof AppData === "function" ? AppData(currentUser) : AppData;
 
   const handleChoose = (type) => {
     setOpenDesignModal(false);
@@ -50,7 +54,7 @@ const Appbar = ({ onClose }) => {
     localStorage.setItem('selectedMenuIndex', selected);
   }, [selected]);
 
-  const visibleMenuItems = AppData.filter(item => {
+  const visibleMenuItems = menuItems.filter(item => {
     const requiresAuth =
       item.headingKey === "Design" || item.path === "/portfolio";
     return user || !requiresAuth;
@@ -128,7 +132,7 @@ const Appbar = ({ onClose }) => {
       <div className={`SidebarOverlay ${isMenuOpen ? 'show' : ''}`} onClick={() => setIsMenuOpen(false)} />
 
       <div className={`SidebarMenu ${isMenuOpen ? 'open' : ''}`}>
-        {AppData.map((item, index) => (
+        {menuItems.map((item, index) => (
           <div
             className={selected === index ? 'SidebarMenuItem active' : 'SidebarMenuItem'}
             key={index}

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// Editor.jsx
+import React, { useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 
 import SidebarTools from '../../tools/SidebarTools';
@@ -18,22 +19,20 @@ import {
   updateCurrentPageElements,
   setPageBackground,
   handleAddElement,
-  goToPage,
   addNewPage,
-  duplicateCurrentPage,
   deleteCurrentPage,
   resetToDefault,
   handleMouseDown,
   handleMouseMove,
   handleMouseUp
 } from './editorHandlers';
+
 import {
   handleUpdateShape,
-  handleDragEnd,
-  handleTextEdit,
-  handleDeleteElement,
+  handleDragEnd as ctrlDragEnd,
+  handleTextEdit as ctrlTextEdit,
+  handleDeleteElement as ctrlDelete,
 } from '../../../controller/EditorControls';
-
 
 import { useEditorLifecycle } from '../../../../hooks/useEditorlifecycle.jsx';
 import { handleSave } from '../editor/saveHandlers.jsx';
@@ -69,9 +68,6 @@ const Editor = () => {
     width: type === "mobile" ? 390 : 1200,
     height: type === "mobile" ? 844 : 800,
   });
-const deleteSelectedElement = () => {
-  handleDeleteElement(selectedElementId, setElements, setSelectedElementId);
-};
 
   const [pages, setPages] = useState([
     {
@@ -84,79 +80,98 @@ const deleteSelectedElement = () => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
   const {
-    elements, setElements,
     selectedElementId, setSelectedElementId,
     drawElementId, setDrawElementId,
     isDrawing, setIsDrawing,
     stageRef,
   } = useEditorState(defaultElements, storageKey);
 
+  const updateElements = (updaterOrArray) => {
+    setPages(prev => {
+      const updated = [...prev];
+      const current = updated[currentPageIndex] || { elements: [] };
+
+      const nextElements = typeof updaterOrArray === 'function'
+        ? updaterOrArray(current.elements || [])
+        : updaterOrArray;
+
+      updated[currentPageIndex] = {
+        ...current,
+        elements: nextElements,
+      };
+      return updated;
+    });
+  };
+
+  const deleteSelectedElement = () => {
+    ctrlDelete(selectedElementId, updateElements, setSelectedElementId);
+  };
+
   const { activate: activateColorPicker } = useColorPicker({
     stageRef,
     selectedElementId,
-    setElements,
+    setElements: updateElements, 
   });
 
   const { saveDesign, isSaving } = useSaveDesign();
 
-  // إدارة الجلب والتحقق من المستخدم
-  useEditorLifecycle({
-    initialDesignId,
-    setPages,
-    setElements,
-    setCanvasSize,
-    setDesignId,
-    type,
-    user,
-    loading,
-    navigate
-  });
 
-  useDeleteElementOnKeypress(selectedElementId, setElements, setSelectedElementId);
+useEditorLifecycle({
+  initialDesignId: designId,
+  setPages,
+  setCanvasSize,
+  setDesignId,
+  type,
+  user,
+  loading,
+  navigate,
+  currentPageIndex
+});
+
+  useDeleteElementOnKeypress(selectedElementId, updateElements, setSelectedElementId);
 
   const goToPreview = () =>
     navigate("/preview", { state: { pages, canvasSize, scale: 1.5 } });
 
+  const elements = pages[currentPageIndex]?.elements || [];
+
   return (
     <div className={`editor-root ${type === "mobile" ? "mobile" : "desktop"}`}>
       {!showAppbar && (
-<Topbar
-  onToggleAppbar={() => setShowAppbar(true)}
-  onPreview={goToPreview}
-  pages={pages}
-  currentPageIndex={currentPageIndex}        
-  setCurrentPageIndex={setCurrentPageIndex}  
-  elements={elements}                        
-  setElements={setElements}                  
-  canvasSize={canvasSize}
-  stageRef={stageRef}
-  designId={designId}
-  competitionId={competitionId}
-  addNewPage={() => addNewPage(setPages, setElements, setCurrentPageIndex)}
-  deleteCurrentPage={() =>
-    deleteCurrentPage(pages, currentPageIndex, setPages, setElements, setCurrentPageIndex)
-  }
-/>
-
-
-        
+        <Topbar
+          onToggleAppbar={() => setShowAppbar(true)}
+          onPreview={goToPreview}
+          pages={pages}
+          currentPageIndex={currentPageIndex}
+          setCurrentPageIndex={setCurrentPageIndex}
+          elements={elements}
+          setElements={updateElements}
+          canvasSize={canvasSize}
+          stageRef={stageRef}
+          designId={designId}
+          competitionId={competitionId}
+          addNewPage={() => addNewPage(setPages, updateElements, setCurrentPageIndex)}
+          deleteCurrentPage={() =>
+            deleteCurrentPage(pages, currentPageIndex, setPages, updateElements, setCurrentPageIndex)
+          }
+        />
       )}
 
       {showAppbar && <Appbar onClose={() => setShowAppbar(false)} />}
 
       <div className="editor-container" style={{ display: "flex" }}>
-  
         <SidebarTools
           onAddElement={(t) =>
-            handleAddElement(t,
-               activateColorPicker,
-                setDrawElementId, 
-               (el) => updateCurrentPageElements(el, setPages, setElements, currentPageIndex),
-                 pages[currentPageIndex]?.elements || []
-              )
+            handleAddElement(
+              t,
+              activateColorPicker,
+              setDrawElementId,
+              (el) => updateCurrentPageElements(el, setPages, updateElements, currentPageIndex),
+              elements
+            )
           }
           setElements={(el) =>
-            updateCurrentPageElements(el, setPages, setElements, currentPageIndex)
+            updateCurrentPageElements(el, setPages, updateElements, currentPageIndex)
           }
           setBackgroundColor={(c) =>
             setPageBackground(c, setPages, currentPageIndex)
@@ -166,63 +181,61 @@ const deleteSelectedElement = () => {
         <div style={{ marginLeft: "10px", flex: 1 }}>
           <EditorButtons
             onPreview={goToPreview}
-            onReset={() => resetToDefault(setPages, setCurrentPageIndex, setElements, defaultElements)}
+            onReset={() =>
+              resetToDefault(setPages, setCurrentPageIndex, updateElements, defaultElements)
+            }
             onSave={() =>
               handleSave({
-                pages, elements, setElements, stageRef,
-                setCurrentPageIndex, currentPageIndex,
-                canvasSize, designId, saveDesign
+                pages,
+                elements,
+                setElements: updateElements,
+                stageRef,
+                setCurrentPageIndex,
+                currentPageIndex,
+                canvasSize,
+                designId,
+                saveDesign
               })
             }
             isSaving={isSaving}
           />
 
           <CanvasStage
-          pages={pages}                
-          currentPageIndex={currentPageIndex} 
+            pages={pages}
+            currentPageIndex={currentPageIndex}
             stageRef={stageRef}
             canvasSize={canvasSize}
-            elements={elements}
             handleMouseDown={() =>
-              handleMouseDown(drawElementId, stageRef, setIsDrawing, elements, updateCurrentPageElements)
+              handleMouseDown(drawElementId, stageRef, setIsDrawing, elements, updateElements)
             }
             handleMouseMove={() =>
-              handleMouseMove(isDrawing, drawElementId, stageRef, elements, updateCurrentPageElements)
+              handleMouseMove(isDrawing, drawElementId, stageRef, elements, updateElements)
             }
             handleMouseUp={() => handleMouseUp(setIsDrawing, setDrawElementId)}
             handleSelect={(id) => setSelectedElementId(id)}
-            handleDragEnd={(id, pos) =>
-              handleDragEnd(id, pos, (el) => updateCurrentPageElements(el, setPages, setElements, currentPageIndex))
-            }
-            handleTextEdit={(id, text) =>
-              handleTextEdit(id, text, (el) => updateCurrentPageElements(el, setPages, setElements, currentPageIndex))
-            }
+            handleDragEnd={(id, pos) => ctrlDragEnd(id, pos, updateElements)}
+            handleTextEdit={(id, text) => ctrlTextEdit(id, text, updateElements)}
             selectedElementId={selectedElementId}
             clearSelection={() => setSelectedElementId(null)}
             backgroundColor={pages[currentPageIndex]?.backgroundColor || "#ffffff"}
-             deleteSelectedElement={deleteSelectedElement}
+            deleteSelectedElement={deleteSelectedElement}
+            updateElements={updateElements}
+            scale={1}
           />
         </div>
-<PropertiesPanel
-  shapes={pages[currentPageIndex]?.elements || []}  
-  onUpdateShape={(id, props) =>
-    handleUpdateShape(
-      id,
-      props,
-      (el) => updateCurrentPageElements(el, setPages, setElements, currentPageIndex)
-    )
-  }
-  selectedId={selectedElementId}
-/>
 
-
+        <PropertiesPanel
+          shapes={elements}
+          onUpdateShape={(id, props) => handleUpdateShape(id, props, updateElements)}
+          selectedId={selectedElementId}
+        />
       </div>
-      <PageThumbnails 
-  pages={pages}
-  currentPageIndex={currentPageIndex}
-  setCurrentPageIndex={setCurrentPageIndex}
-/>
 
+      <PageThumbnails
+        pages={pages}
+        currentPageIndex={currentPageIndex}
+        setCurrentPageIndex={setCurrentPageIndex}
+      />
     </div>
   );
 };

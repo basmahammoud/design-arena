@@ -51,15 +51,18 @@ export const setPageBackground = (color, setPages, currentPageIndex) => {
   });
 };
 
-export const handleAddElement = (type, activateColorPicker, setDrawElementId, updateFn, elements) => {
+export const handleAddElement = (type, activateColorPicker, setDrawElementId, updateFn) => {
   if (type === "color-picker") return activateColorPicker();
   const id = Date.now().toString();
   const newElement = createElement(type, id);
-  if (newElement) {
-    if (type === "draw") setDrawElementId(id);
-    updateFn([...elements, newElement]);
-  }
+  if (!newElement) return;
+
+  if (type === "draw") setDrawElementId(id);
+
+  // تمرير العنصر مباشرة لـ updateFn
+  updateFn(newElement);
 };
+
 
 export const resetToDefault = (setPages, setCurrentPageIndex, setElements, defaultElements) => {
   const defaultPage = {

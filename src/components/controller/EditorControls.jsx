@@ -1,52 +1,49 @@
 import { v4 as uuidv4 } from 'uuid';
 
-
+// تحديث خصائص عنصر موجود
 export const handleUpdateShape = (id, newProps, setElements) => {
-  setElements((prev) =>
-    prev.map((shape) => (shape.id === id ? { ...shape, ...newProps } : shape))
+  if (!id) return;
+  setElements(prev =>
+    prev.map(shape => (shape && shape.id === id ? { ...shape, ...newProps } : shape))
   );
 };
 
-export const handleDragEnd = (id, newProps, updateFn) => {
-  updateFn((prevElements) =>
-    prevElements.map((el) =>
-      el.id === id ? { ...el, ...newProps } : el
+// بعد سحب العنصر وإفلاته
+export const handleDragEnd = (id, newPosition, setElements) => {
+  if (!id || !newPosition) return;
+  setElements(prev =>
+    prev.map(el =>
+      el && el.id === id ? { ...el, x: newPosition.x, y: newPosition.y } : el
     )
   );
 };
 
-
+// تعديل نص عنصر
 export const handleTextEdit = (id, newText, setElements) => {
-  setElements((prev) =>
-    prev.map((el) => (el.id === id ? { ...el, text: newText } : el))
+  if (!id) return;
+  setElements(prev =>
+    prev.map(el => (el && el.id === id ? { ...el, text: newText } : el))
   );
 };
 
-
-export const handleImageAdd = (imageSrc, setElements) => {
-  const newImage = {
+// إضافة صورة جديدة
+export const handleImageAdd = (src, setElements) => {
+  if (!src) return;
+  const newElement = {
     id: uuidv4(),
-    type: 'image',
-    src: imageSrc,
-    x: 100,
-    y: 100,
+    type: "image",
+    src,
+    x: 50,
+    y: 50,
     width: 200,
-    height: 200,
+    height: 200
   };
-
-  setElements((prev) => {
-    const updated = [...prev, newImage];
-    localStorage.setItem('editor-elements', JSON.stringify(updated));
-    return updated;
-  });
+  setElements(prev => [...prev.filter(el => el), newElement]); // تجاهل أي null
 };
 
+// حذف عنصر محدد
 export const handleDeleteElement = (selectedId, setElements, setSelectedId) => {
   if (!selectedId) return;
-  setElements((prev) => prev.filter((el) => el.id !== selectedId));
+  setElements(prev => prev.filter(el => el && el.id !== selectedId));
   setSelectedId(null);
 };
-
-
-
-

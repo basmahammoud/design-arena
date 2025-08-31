@@ -1,4 +1,3 @@
-// src/hooks/useUpdateDesign.js
 import { useState } from 'react';
 import { updateDesign } from '../services/profileserv';
 

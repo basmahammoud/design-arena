@@ -9,7 +9,7 @@ const useProfile = () => {
 
   const fetchProfile = useCallback(async () => {
     if (isGuest) {
-      setLoading(false); // لا تحاول الجلب إطلاقاً
+      setLoading(false); 
       return;
     }
 

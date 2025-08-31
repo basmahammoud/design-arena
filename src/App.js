@@ -39,7 +39,7 @@ function App() {
               {/* نغلف الصفحات التي تحتاج Sidebar بمكون Layout */}
 
               <Route path="/homepage" element={<Layout><Homepage /></Layout>} />
-              <Route path="/portfolio" element={<Layout><Profile /></Layout>} />
+              <Route path="/portfolio/:userId" element={<Layout><Profile /></Layout>} />
               <Route path="/design" element={<Layout><Design /></Layout>} />
               <Route path="/choseDesign" element={<Layout><ChoseDesign /></Layout>} />
               <Route path="/categories" element={<Layout><Courses /></Layout>} />

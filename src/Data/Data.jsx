@@ -4,10 +4,15 @@ import {
   
   import img2 from '../assets/img2.png';
 
-export const AppData = [
+export const AppData = (currentUser) => [
   { headingKey: "Homepage", path: "/homepage" },
-  { headingKey: "Portfolio", path: "/portfolio" },
-  { headingKey: "Courses", path: "/categories" },
+  { 
+    headingKey: "Portfolio", 
+    path: currentUser ? `/portfolio/${currentUser.id}` : "/login" 
+  },
+  { headingKey: "Courses", path: "/categories" 
+    
+  },
   { headingKey: "Design", isDesignPopup: true },
 ];
 
