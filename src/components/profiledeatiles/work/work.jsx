@@ -20,36 +20,50 @@ const MyDesign = ({ user, refetchProfile }) => {
 
   const [selectedDesign, setSelectedDesign] = useState(null);
   const [selectedPagesDesign, setSelectedPagesDesign] = useState(null);
+  const {  loading: updateLoading, error: updateError } = useUpdateDesign();
 
 const handleSave = async ({ name, json_data, image_base64 }) => {
   try {
+    console.log('📤 البيانات المرسلة:', { name, json_data, image_base64 });
+
     let finalImages = [];
 
+    // معالجة الصور بشكل صحيح
     if (Array.isArray(image_base64) && image_base64.length > 0) {
       finalImages = image_base64;
+    } else if (selectedDesign?.image_path) {
+      // التأكد من أن image_path هي مصفوفة
+      const oldImages = typeof selectedDesign.image_path === 'string' 
+        ? JSON.parse(selectedDesign.image_path || "[]")
+        : selectedDesign.image_path;
+      finalImages = oldImages;
     } else {
-      if (selectedDesign?.image_path) {
-        const oldImages = JSON.parse(selectedDesign.image_path || "[]");
-        finalImages = oldImages; 
-      }
+      throw new Error("يجب وجود صورة واحدة على الأقل للتصميم");
     }
 
+    // التأكد من أن json_data هي string وليست object
+    const jsonDataString = typeof json_data === 'string' 
+      ? json_data 
+      : JSON.stringify(json_data);
+
     const dataToSend = { 
-      name, 
-      json_data, 
+      name: name || selectedDesign?.name || "Untitled Design", 
+      json_data: jsonDataString,
       image_base64: finalImages
     };
 
+    console.log('📤 البيانات المعدلة للمرسل:', dataToSend);
+    
     await handleUpdateDesign(selectedDesign.id, dataToSend);
-    alert("تم الحفظ بنجاح");
+    alert("✅ تم الحفظ بنجاح");
     setSelectedDesign(null);
     if (refetchProfile) refetchProfile();
+
   } catch (err) {
-    console.error("خطأ أثناء الحفظ:", err);
-    alert("حدث خطأ أثناء الحفظ");
+    console.error("❌ خطأ أثناء الحفظ:", err);
+    alert(updateError || "حدث خطأ أثناء الحفظ");
   }
 };
-
 
 
 

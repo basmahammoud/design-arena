@@ -1,13 +1,11 @@
 import "./home.css";
 import useHomeDesigns from "../../hooks/useHomepage";  
-import useEditDesign from '../../hooks/useEditdesigns'; 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaThumbsUp, FaEye } from "react-icons/fa"; 
 
 const Home = ({ designs: externalDesigns, loading: externalLoading }) => {
   const { designs: homeDesigns, loading: homeLoading, error } = useHomeDesigns(); 
-  const { handleEdit, loading: editLoading } = useEditDesign(); 
 
   const [filteredDesigns, setFilteredDesigns] = useState([]);
   const navigate = useNavigate();
@@ -19,39 +17,14 @@ const Home = ({ designs: externalDesigns, loading: externalLoading }) => {
     setFilteredDesigns(designs || []);
   }, [designs]);
 
-  const handleEditClick = async (designId) => {
-    const design = filteredDesigns.find((d) => d.id === designId);
-    if (!design) return;
+const handleEditClick = (designId) => {
+  localStorage.removeItem('editor-elements-desktop');
+  navigate(`/editor?type=desktop/${designId}`, {
+    state: { designId, fromHome: true },   
+  });
+};
 
-    try {
-      const base64Images = await Promise.all(
-        (design.image_path || []).map(async (imgPath) => {
-          const res = await fetch(`http://localhost:8000/${imgPath}`);
-          const blob = await res.blob();
 
-          return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob); 
-          });
-        })
-      );
-
-      const dataToSend = {
-        json_data: design.json_data || {}, 
-        image_base64: base64Images,
-        name: design.name || "",
-        description: design.description || "",
-      };
-
-      await handleEdit(designId, dataToSend);
-      navigate(`/editor/${designId}`);
-    } catch (error) {
-      console.error("خطأ أثناء تعديل التصميم:", error);
-      alert("حدث خطأ أثناء تعديل التصميم.");
-    }
-  };
 
   const goToPortfolio = (ownerId) => {
     navigate(`/portfolio/${ownerId}`);
@@ -84,7 +57,7 @@ const Home = ({ designs: externalDesigns, loading: externalLoading }) => {
                   onClick={() => goToPortfolio(design.user.id)}
                 >
                   <img
-                    src={`http://localhost:8000/storage/${design.user.profile_picture}`}
+                    src={`/storage/${design.user.profile_picture}`}
                     alt={design.user.name}
                     className="owner-avatar"
                   />
@@ -101,12 +74,12 @@ const Home = ({ designs: externalDesigns, loading: externalLoading }) => {
                 </span>
               </div>
 
+              {/* 👇 حذف editLoading واستخدام الزر فقط للتنقّل */}
               <button
                 className="edit-button"
                 onClick={() => handleEditClick(design.id)}
-                disabled={editLoading}
               >
-                {editLoading ? " loading..." : "edit"}
+                Edit
               </button>
             </div>
           );

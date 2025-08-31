@@ -2,10 +2,9 @@ import { useState } from "react";
 import { saveWebDesign } from "../services/savebuttonserv";
 import { updateDesign } from "../services/profileserv";
 
-// 🖼️ snapshot حقيقي من stage (Konva)
 const generateSnapshotFromStage = (stage) => {
   if (!stage) return "";
-  return stage.toDataURL({ pixelRatio: 2 }); // دقة أعلى
+  return stage.toDataURL({ pixelRatio: 2 }); 
 };
 
 export const useSaveDesign = () => {

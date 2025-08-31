@@ -129,6 +129,18 @@ export const createElement = (type, id) => {
         lineJoin: 'round',
         ...shadowProps,
       };
+    case 'image':
+      return {
+        id,
+        type,
+        x: 100,
+        y: 100,
+        width: 200,
+        height: 200,
+        src: '', 
+        draggable: true,
+        ...shadowProps,
+      };
     default:
       return null;
   }

@@ -72,7 +72,23 @@
   color: white;
   transform: translateY(-2px);
 }
-
+.download-btn{
+  background-color: #7ca0ff50;
+  border: none;
+  padding: 10px;
+  margin-right: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #2d3e70;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.download-btn:hover {
+  background-color: #4e75d1;
+  color: white;
+  transform: translateY(-2px);
+}
 .save-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;

@@ -1,81 +1,94 @@
 import React, { useRef, useState } from 'react';
-import { Text, Rect, Circle, Shape, Image as KonvaImage } from 'react-konva';
+import {
+  Text,
+  Rect,
+  Circle,
+  Ellipse,
+  Line,
+  Shape,
+  Image as KonvaImage,
+} from 'react-konva';
 import ResizableShape from '../canvas/resizableshape';
 import useImage from 'use-image';
-import { handleUpdateShape } from '../../controller/EditorControls';
 
-const ImageElement = ({ element, isSelected, onSelect, onDragEnd, onTransformEnd, setElements }) => {
-  const [image] = useImage(element.src, "anonymous"); 
+
+//  مكون خاص برسم الصور
+const ImageElement = ({ element, isSelected, onSelect, onDragEnd, onTransformEnd }) => {
+  const [image] = useImage(element.src);
   const shapeRef = useRef();
-
-  if (!image) return null;
 
   return (
     <>
       <KonvaImage
-        ref={shapeRef}
         image={image}
         x={element.x}
         y={element.y}
-        width={element.width || image.width}
-        height={element.height || image.height}
+        width={element.width}
+        height={element.height}
         draggable
+        ref={shapeRef}
         onClick={() => onSelect(element.id)}
         onTap={() => onSelect(element.id)}
-        onDragEnd={(e) => onDragEnd(element.id, { x: e.target.x(), y: e.target.y() })}
+        onDragEnd={(e) =>
+          onDragEnd(element.id, {
+            x: e.target.x(),
+            y: e.target.y(),
+          })
+        }
+        stroke={isSelected ? 'blue' : null}
+        strokeWidth={isSelected ? 2 : 0}
       />
-      {isSelected && (
-        <Rect
-          x={element.x}
-          y={element.y}
-          width={element.width || image.width}
-          height={element.height || image.height}
-          stroke="blue"
-          strokeWidth={2}
-          dash={[4, 4]}
-        />
-      )}
       {isSelected && (
         <ResizableShape
           shapeRef={shapeRef}
           isSelected
-          type="image"
-          onTransformEnd={(newProps) => handleUpdateShape(element.id, newProps, setElements)}
+          onTransformEnd={(newProps) => {
+            onTransformEnd(element.id, newProps);
+          }}
         />
       )}
     </>
   );
 };
 
-const ShapeRenderer = ({ elements, handleSelect, handleDragEnd, handleTextEdit, selectedId, setElements, onDelete }) => {
-  const [editingId, setEditingId] = useState(null);
 
-  if (!Array.isArray(elements)) return null;
+const ShapeRenderer = ({
+  elements,
+  handleSelect,
+  handleDragEnd,
+  handleTextEdit,
+  selectedId,
+}) => {
+  const [editingId, setEditingId] = useState(null);
 
   return (
     <>
-      {elements.filter(Boolean).map((el) => {
-        const shadowProps = el?.shadow?.color
-          ? {
-              shadowColor: `rgba(${el.shadow.color.r}, ${el.shadow.color.g}, ${el.shadow.color.b}, ${el.shadow.color.a})`,
-              shadowOffset: { x: el.shadow.offsetX ?? 5, y: el.shadow.offsetY ?? 5 },
-              shadowBlur: el.shadow.blur ?? 10,
-            }
-          : {};
+      {elements.map((el) => {
+        const shadowProps =
+          el.shadow && el.type !== 'text'
+            ? {
+                shadowColor: `rgba(${el.shadow.color.r}, ${el.shadow.color.g}, ${el.shadow.color.b}, ${el.shadow.color.a})`,
+                shadowOffset: { x: el.shadow.offsetX, y: el.shadow.offsetY },
+                shadowBlur: el.shadow.blur,
+              }
+            : {};
 
-        const fillSafe = typeof el.fill === 'string' ? el.fill : 'rgba(255,255,255,1)';
         const shapeRef = React.createRef();
 
         const commonProps = {
           ...el,
           ref: shapeRef,
           draggable: true,
-          fill: fillSafe,
           onClick: () => handleSelect(el.id),
           onTap: () => handleSelect(el.id),
-          onDragEnd: (e) => handleDragEnd(el.id, { x: e.target.x(), y: e.target.y() }),
+          onDragEnd: (e) =>
+            handleDragEnd(el.id, {
+              x: e.target.x(),
+              y: e.target.y(),
+            }),
         };
 
+        // 🟡 النصوص
         if (el.type === 'text') {
           const isEditing = editingId === el.id;
 
@@ -113,7 +126,7 @@ const ShapeRenderer = ({ elements, handleSelect, handleDragEnd, handleTextEdit, 
                   textarea.style.fontFamily = e.target.fontFamily();
                   textarea.style.transformOrigin = 'left top';
                   textarea.style.textAlign = el.align;
-                  textarea.style.color = el.fill || '#000';
+                  textarea.style.color = el.fill;
                   textarea.style.zIndex = 100;
                   textarea.style.whiteSpace = 'nowrap';
                   textarea.style.transform = `rotate(${el.rotation || 0}deg)`;
@@ -157,50 +170,56 @@ const ShapeRenderer = ({ elements, handleSelect, handleDragEnd, handleTextEdit, 
                   textarea.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') removeTextarea();
                   });
+
                   textarea.addEventListener('blur', () => {
                     removeTextarea();
                   });
                 }}
               />
               {selectedId === el.id && (
-                <ResizableShape
-                  shapeRef={shapeRef}
-                  isSelected
-                  type="text"
-                  onTransformEnd={(newProps) => handleUpdateShape(el.id, newProps, setElements)}
-                />
+                <ResizableShape shapeRef={shapeRef} isSelected />
               )}
             </React.Fragment>
           );
         }
 
+        // 🟢 بقية العناصر حسب النوع
         switch (el.type) {
           case 'rect':
             return (
-              <React.Fragment key={el.id}>
-                <Rect {...commonProps} {...shadowProps} />
-                {selectedId === el.id && (
-                  <ResizableShape
-                    shapeRef={shapeRef}
-                    isSelected
-                    type="rect"
-                    onTransformEnd={(newProps) => handleUpdateShape(el.id, newProps, setElements)}
-                  />
-                )}
-              </React.Fragment>
+             <React.Fragment key={el.id}>
+  <Rect {...commonProps} {...shadowProps} />
+  {selectedId === el.id && (
+    <ResizableShape
+      shapeRef={shapeRef}
+      isSelected
+      onTransformEnd={(newProps) => handleDragEnd(el.id, newProps)}
+    />
+  )}
+</React.Fragment>
+
             );
           case 'circle':
             return (
+           <React.Fragment key={el.id}>
+  <Circle {...commonProps} {...shadowProps} />
+  {selectedId === el.id && (
+    <ResizableShape
+      shapeRef={shapeRef}
+      isSelected
+      onTransformEnd={(newProps) => handleDragEnd(el.id, newProps)}
+    />
+  )}
+</React.Fragment>
+
+            )
+          case 'line':
+          case 'line-horizontal':
+          case 'line-vertical':
+          case 'draw':
+            return (
               <React.Fragment key={el.id}>
-                <Circle {...commonProps} {...shadowProps} />
-                {selectedId === el.id && (
-                  <ResizableShape
-                    shapeRef={shapeRef}
-                    isSelected
-                    type="circle"
-                    onTransformEnd={(newProps) => handleUpdateShape(el.id, newProps, setElements)}
-                  />
-                )}
+                <Line {...commonProps} {...shadowProps} />
               </React.Fragment>
             );
           case 'triangle':
@@ -215,32 +234,27 @@ const ShapeRenderer = ({ elements, handleSelect, handleDragEnd, handleTextEdit, 
                     ctx.lineTo(el.points[2], el.points[3]);
                     ctx.lineTo(el.points[4], el.points[5]);
                     ctx.closePath();
-                    ctx.fillStyle = fillSafe;
+                    ctx.fillStyle = el.fill;
                     ctx.fill();
                     ctx.strokeShape(shape);
                   }}
                 />
                 {selectedId === el.id && (
-                  <ResizableShape
-                    shapeRef={shapeRef}
-                    isSelected
-                    type="triangle"
-                    onTransformEnd={(newProps) => handleUpdateShape(el.id, newProps, setElements)}
-                  />
+                  <ResizableShape shapeRef={shapeRef} isSelected />
                 )}
               </React.Fragment>
             );
           case 'image':
             return (
-              <ImageElement
-                key={el.id}
-                element={el}
-                isSelected={selectedId === el.id}
-                onSelect={handleSelect}
-                onDragEnd={(id, pos) => handleDragEnd(id, pos)}
-                onTransformEnd={(id, newProps) => handleUpdateShape(id, newProps, setElements)}
-                setElements={setElements}
-              />
+        <ImageElement
+  key={el.id}
+  element={el}
+  isSelected={selectedId === el.id}
+  onSelect={handleSelect}
+  onDragEnd={handleDragEnd}
+
+/>
+
             );
           default:
             return null;

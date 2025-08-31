@@ -1,8 +1,7 @@
-// hooks/useEditDesign.js
 import { useState } from "react";
 import { editAndExportDesign } from "../services/savebuttonserv";
 
-const useEditDesign = () => {
+const useRuseDesign = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -23,4 +22,4 @@ const useEditDesign = () => {
   return { handleEdit, loading, error };
 };
 
-export default useEditDesign;
+export default useRuseDesign;

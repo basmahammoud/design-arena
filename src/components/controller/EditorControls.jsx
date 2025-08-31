@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-
+import { handleAddElement } from '../design/canvas/editor/editorHandlers';
 // تحديث خصائص عنصر موجود
 export const handleUpdateShape = (id, newProps, setElements) => {
   if (!id) return;
@@ -27,19 +27,12 @@ export const handleTextEdit = (id, newText, setElements) => {
 };
 
 // إضافة صورة جديدة
-export const handleImageAdd = (src, setElements) => {
-  if (!src) return;
-  const newElement = {
-    id: uuidv4(),
-    type: "image",
-    src,
-    x: 50,
-    y: 50,
-    width: 200,
-    height: 200
-  };
-  setElements(prev => [...prev.filter(el => el), newElement]); // تجاهل أي null
+
+export const handleImageAdd = (imageSrc, updateFn, activateColorPicker, setDrawElementId) => {
+  if (!imageSrc) return;
+  handleAddElement("image", activateColorPicker, setDrawElementId, updateFn, imageSrc);
 };
+
 
 // حذف عنصر محدد
 export const handleDeleteElement = (selectedId, setElements, setSelectedId) => {

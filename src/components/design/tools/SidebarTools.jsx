@@ -10,7 +10,12 @@ import { PiLineSegmentBold } from "react-icons/pi";
 import UploadImage from '../canvas/uploadimg/uploadimage';
 import { handleImageAdd } from '../../controller/EditorControls';
 
-const SidebarTools = ({ onAddElement, setElements, setBackgroundColor }) => {
+const SidebarTools = ({onAddElement,
+  setElements,
+  setBackgroundColor,
+  updateCurrentPageElements, 
+  activateColorPicker,       
+  setDrawElementId  }) => {
   const [showShapes, setShowShapes] = useState(false);
   const [showLines, setShowLines] = useState(false);
   const shapesRef = useRef(null);
@@ -85,9 +90,8 @@ const SidebarTools = ({ onAddElement, setElements, setBackgroundColor }) => {
           }}
         />
 
-     <UploadImage
-  onImageAdd={(imageSrc) => handleImageAdd(imageSrc, setElements)}
-/>
+            {/* زر رفع صورة */}
+  <UploadImage onImageAdd={(src) => handleImageAdd(src, updateCurrentPageElements)} />
 
       </div>
     </div>

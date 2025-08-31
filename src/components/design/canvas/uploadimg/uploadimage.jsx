@@ -28,6 +28,7 @@ const UploadImage = ({ onImageAdd }) => {
 // }, [onImageAdd]);
 
 
+  // عند اختيار صورة من الجهاز
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith('image/')) {

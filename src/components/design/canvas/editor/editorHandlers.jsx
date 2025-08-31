@@ -51,15 +51,32 @@ export const setPageBackground = (color, setPages, currentPageIndex) => {
   });
 };
 
-export const handleAddElement = (type, activateColorPicker, setDrawElementId, updateFn) => {
+export const handleAddElement = (type, activateColorPicker, setDrawElementId, updateFn, imageSrc = null) => {
   if (type === "color-picker") return activateColorPicker();
+
   const id = Date.now().toString();
-  const newElement = createElement(type, id);
-  if (!newElement) return;
+  let newElement;
+
+  if (type === "image") {
+    if (!imageSrc) return; // لا تضيف صورة بدون src
+    newElement = {
+      id,
+      type: 'image',
+      x: 100,
+      y: 100,
+      width: 200,
+      height: 200,
+      src: imageSrc,
+      draggable: true,
+    };
+  } else {
+    newElement = createElement(type, id);
+    if (!newElement) return;
+  }
 
   if (type === "draw") setDrawElementId(id);
 
-  // تمرير العنصر مباشرة لـ updateFn
+  // إضافة العنصر للصفحة الحالية
   updateFn(newElement);
 };
 

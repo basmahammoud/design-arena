@@ -1,4 +1,3 @@
-// src/services/webDesignService.js
 import axios from 'axios';
 
 axios.defaults.withCredentials = true;
@@ -29,13 +28,19 @@ export const saveWebDesign = async ({ pages, imageBase64, name = '' }) => {
       }
     };
 
+    // استخدام multipart/form-data بدلاً من JSON مباشرة
     const formData = new FormData();
     formData.append("json_data", JSON.stringify(jsonPayload));
-    formData.append("name", name);
+    formData.append("name", name || 'Untitled Design');
 
-    (Array.isArray(imageBase64) ? imageBase64 : [imageBase64])
-      .filter(Boolean)
-      .forEach(img => formData.append("image_base64[]", img));
+    // إضافة الصور بشكل صحيح
+    if (Array.isArray(imageBase64)) {
+      imageBase64.filter(Boolean).forEach((img, index) => {
+        formData.append(`image_base64[${index}]`, img);
+      });
+    } else if (imageBase64) {
+      formData.append("image_base64[0]", imageBase64);
+    }
 
     const response = await axios.post(
       "http://localhost:8000/web-designs",
@@ -48,6 +53,12 @@ export const saveWebDesign = async ({ pages, imageBase64, name = '' }) => {
   } catch (error) {
     if (error.response?.status === 422) {
       console.error("🛑 Validation error:", error.response.data.errors);
+      // عرض الأخطاء بشكل مفصل
+      if (error.response.data.errors) {
+        Object.entries(error.response.data.errors).forEach(([field, errors]) => {
+          console.error(`Field ${field}:`, errors);
+        });
+      }
     } else {
       console.error("❌ Unexpected error:", error);
     }
@@ -61,7 +72,6 @@ export const saveWebDesign = async ({ pages, imageBase64, name = '' }) => {
 //جلب تصميم معين
 export const getWebDesign = async (id) => {
   const response = await axios.get(`http://localhost:8000/web-designs/${id}`);
-  console.log("re",response);
   return response.data;
 };
 //جلب تصاميم الشخص
@@ -69,24 +79,24 @@ export const getDesign = async (userId) => {
   const response = await axios.get(`http://localhost:8000/designs/user/${userId}`, { withCredentials: true });
   return response.data;
 };
-//تعديل تصميم
+
+// اعادة استخدام التصميم
 export const editAndExportDesign = async (
   designId,
   { json_data, image_base64, name = null, description = null }
 ) => {
   try {
     const formData = new FormData();
-    formData.append("json_data", JSON.stringify(json_data));
+    formData.append("json_data", json_data || ""); 
     formData.append("name", name ?? "");
     formData.append("description", description ?? "");
 
-    //  أضف كل عنصر من مصفوفة الصور base64
     if (Array.isArray(image_base64)) {
-      image_base64.forEach((img) => {
-        formData.append("image_base64[]", img);
+      image_base64.forEach((img, index) => {
+        formData.append(`image_base64[${index}]`, img); 
       });
     } else {
-      formData.append("image_base64[]", image_base64);
+      formData.append("image_base64[0]", image_base64);
     }
 
     const token = localStorage.getItem("token");
@@ -99,25 +109,36 @@ export const editAndExportDesign = async (
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
-        responseType: "blob", // ضروري إذا كنت تتعامل مع ملف سيتم تحميله من السيرفر
+        responseType: "blob", 
       }
     );
 
-    // إذا أردت تحميل الملف مباشرة:
+    if (response.headers["content-type"].includes("application/json")) {
+      const text = await response.data.text();
+      const json = JSON.parse(text);
+      throw new Error(json.error || "خطأ في السيرفر");
+    }
+
+    // تحميل الصورة
     const blob = new Blob([response.data]);
     const downloadUrl = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = downloadUrl;
-    a.download = "preview.png"; // أو استخرج الاسم من الهيدر إذا أردت
+    a.download = "preview.png";
     document.body.appendChild(a);
     a.click();
-    a.remove();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(downloadUrl);
 
     return true;
   } catch (error) {
-    console.error("❌ Unexpected update error:", error.response?.data || error.message);
+    console.error(
+      "❌ خطأ غير متوقع أثناء التعديل:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
+
 
 

@@ -57,6 +57,8 @@ const Editor = () => {
   const { user, loading } = useProfile();
   const navigate = useNavigate();
   const { id: competitionId } = useParams();
+  const disableSave = location.state?.disableSave || false;
+    const fromHome = location.state?.fromHome || false;
 
   const type = new URLSearchParams(location.search).get("type");
   const storageKey = `editor-elements-${type || "default"}`;
@@ -154,6 +156,7 @@ useEditorLifecycle({
           deleteCurrentPage={() =>
             deleteCurrentPage(pages, currentPageIndex, setPages, updateElements, setCurrentPageIndex)
           }
+          disableSave={fromHome}
         />
       )}
 
@@ -236,6 +239,7 @@ useEditorLifecycle({
         currentPageIndex={currentPageIndex}
         setCurrentPageIndex={setCurrentPageIndex}
       />
+      
     </div>
   );
 };

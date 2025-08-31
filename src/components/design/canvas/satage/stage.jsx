@@ -26,7 +26,7 @@ const CanvasStage = ({
     }
   };
 
-  const elements = (pages[currentPageIndex]?.elements || []).filter(Boolean);
+const elements = pages[currentPageIndex]?.elements || [];
 
   return (
     <Stage
@@ -60,11 +60,11 @@ const CanvasStage = ({
               <ShapeRenderer
           elements={elements}
           handleSelect={handleSelect}
-          handleDragEnd={handleDragEnd}       // مرتبط مسبقًا بـ updateElements
-          handleTextEdit={handleTextEdit}     // مرتبط مسبقًا بـ updateElements
+          handleDragEnd={handleDragEnd}       
+          handleTextEdit={handleTextEdit}     
           selectedId={selectedElementId}
           onDelete={deleteSelectedElement}
-          setElements={updateElements}        // الدالة الأساسية لتحديث العناصر
+          setElements={updateElements}        
         />
       </Layer>
     </Stage>
