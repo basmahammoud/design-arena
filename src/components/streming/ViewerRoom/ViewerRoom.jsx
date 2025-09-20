@@ -20,7 +20,7 @@ const ViewerRoom = () => {
         try {
           const { connect } = await import("https://cdn.skypack.dev/livekit-client");
 
-          const livekitRoom = await connect("wss://digitizer-a4odfmnb.livekit.cloud", token);
+          const livekitRoom = await connect("wss://digitizer-6wnqoum4.livekit.cloud", token);
 
           const videoContainer = document.getElementById("video-container");
 
@@ -46,7 +46,7 @@ const ViewerRoom = () => {
 
     const connectToRoom = async () => {
       try {
-        await livekitRoom.connect('wss://digitizer-a4odfmnb.livekit.cloud', token);
+        await livekitRoom.connect('wss://digitizer-6wnqoum4.livekit.cloud', token);
         console.log("🎉 تم الاتصال بالغرفة كمشاهد");
 
         livekitRoom.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {

@@ -8,64 +8,67 @@ import useUpdateDesign from '../../../hooks/useUpdateDesign';
 import EditDesignModal from '../../models/edit-design/edit-design';
 import { useTranslation } from "react-i18next";
 import PagesModal from '../../models/pagemodal/pagemodal';
+import useFigma from "../../../hooks/usefigma";
 
 const MyDesign = ({ user, refetchProfile }) => {
   const { handleUpdateDesign } = useUpdateDesign();
   const userId = user?.id;
   const navigate = useNavigate();
   const { t } = useTranslation();
-
+const { exportToFigma, loading: exportLoading, error: exportError } = useFigma();
   const { designs, loading, error } = useUserDesigns(userId);
-  const { exportToFigma, loading: exportLoading, error: exportError } = useExportToFigma();
 
   const [selectedDesign, setSelectedDesign] = useState(null);
   const [selectedPagesDesign, setSelectedPagesDesign] = useState(null);
-  const {  loading: updateLoading, error: updateError } = useUpdateDesign();
+  const { loading: updateLoading, error: updateError } = useUpdateDesign();
 
-const handleSave = async ({ name, json_data, image_base64 }) => {
-  try {
-    console.log('📤 البيانات المرسلة:', { name, json_data, image_base64 });
+  const handleSave = async ({ name, json_data, image_base64 }) => {
+    try {
+      let finalImages = [];
 
-    let finalImages = [];
+      if (Array.isArray(image_base64) && image_base64.length > 0) {
+        finalImages = image_base64;
+      } else if (selectedDesign?.image_path) {
+        const oldImages = typeof selectedDesign.image_path === 'string'
+          ? JSON.parse(selectedDesign.image_path || "[]")
+          : selectedDesign.image_path;
+        finalImages = oldImages;
+      } else {
+        throw new Error("يجب وجود صورة واحدة على الأقل للتصميم");
+      }
 
-    // معالجة الصور بشكل صحيح
-    if (Array.isArray(image_base64) && image_base64.length > 0) {
-      finalImages = image_base64;
-    } else if (selectedDesign?.image_path) {
-      // التأكد من أن image_path هي مصفوفة
-      const oldImages = typeof selectedDesign.image_path === 'string' 
-        ? JSON.parse(selectedDesign.image_path || "[]")
-        : selectedDesign.image_path;
-      finalImages = oldImages;
-    } else {
-      throw new Error("يجب وجود صورة واحدة على الأقل للتصميم");
+      const jsonDataString = typeof json_data === 'string'
+        ? json_data
+        : JSON.stringify(json_data);
+
+      const dataToSend = {
+        name: name || selectedDesign?.name || "Untitled Design",
+        json_data: jsonDataString,
+        image_base64: finalImages
+      };
+
+      await handleUpdateDesign(selectedDesign.id, dataToSend);
+      alert("✅ تم الحفظ بنجاح");
+      setSelectedDesign(null);
+      if (refetchProfile) refetchProfile();
+
+    } catch (err) {
+      console.error("❌ خطأ أثناء الحفظ:", err);
+      alert(updateError || "حدث خطأ أثناء الحفظ");
     }
+  };
 
-    // التأكد من أن json_data هي string وليست object
-    const jsonDataString = typeof json_data === 'string' 
-      ? json_data 
-      : JSON.stringify(json_data);
-
-    const dataToSend = { 
-      name: name || selectedDesign?.name || "Untitled Design", 
-      json_data: jsonDataString,
-      image_base64: finalImages
-    };
-
-    console.log('📤 البيانات المعدلة للمرسل:', dataToSend);
-    
-    await handleUpdateDesign(selectedDesign.id, dataToSend);
-    alert("✅ تم الحفظ بنجاح");
-    setSelectedDesign(null);
-    if (refetchProfile) refetchProfile();
-
-  } catch (err) {
-    console.error("❌ خطأ أثناء الحفظ:", err);
-    alert(updateError || "حدث خطأ أثناء الحفظ");
-  }
-};
-
-
+  const hasPages = (design) => {
+    if (!design.json_data) return false;
+    try {
+      const parsed = typeof design.json_data === "string" 
+        ? JSON.parse(design.json_data) 
+        : design.json_data;
+      return Array.isArray(parsed.pages) && parsed.pages.length > 0;
+    } catch {
+      return false;
+    }
+  };
 
   if (!userId) return <p>جاري تحميل الملف الشخصي...</p>;
 
@@ -82,19 +85,35 @@ const handleSave = async ({ name, json_data, image_base64 }) => {
       ) : (
         <div className="works-grid">
           {designs.map((design) => {
+            let imageUrl = null;
             let imagePaths = [];
-            try {
-              imagePaths = JSON.parse(design.image_path || '[]');
-            } catch {}
-              // console.log('design.id', design.id, 'image_path', design.image_path);
 
-            const imageUrl = imagePaths.length > 0 ? `http://localhost:8000/${imagePaths[0]}` : null;
+            try {
+              const parsed = JSON.parse(design.image_path || '[]');
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                imagePaths = parsed.map(p => `http://localhost:8000/${p}`);
+                imageUrl = imagePaths[0];
+              }
+            } catch {
+              if (typeof design.image_path === 'string' && design.image_path.trim() !== '') {
+                imageUrl = `http://localhost:8000/${design.image_path}`;
+                imagePaths = [imageUrl];
+              }
+            }
 
             return (
-              <div 
-                className="work-item" 
+              <div
+                className="work-item"
                 key={design.id}
-                onClick={() => setSelectedPagesDesign(design)} 
+                onClick={() => {
+                  if (hasPages(design)) {
+                    setSelectedPagesDesign(design);
+                  } else if (imagePaths.length > 0) {
+                    window.open(imagePaths[0], "_blank");
+                  } else {
+                    console.log("تصميم بدون صفحات وبدون صورة.");
+                  }
+                }}
               >
                 {imageUrl ? (
                   <img src={imageUrl} alt={design.name} className="design-image" />
@@ -102,28 +121,27 @@ const handleSave = async ({ name, json_data, image_base64 }) => {
                   <div className="no-image">لا توجد صورة</div>
                 )}
 
-                {/* أيقونة تعديل التصميم */}
-                <div 
-                  className="edit-work" 
+                <div
+                  className="edit-work"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedDesign(design); 
+                    setSelectedDesign(design);
                   }}
                   title="تعديل التصميم"
                 >
                   <FaEdit />
                 </div>
 
-                {/* زر فتح التصميم في Figma */}
+               {/* ✅ زر فتح التصميم في Figma */}
                 <button
                   className="figma-button"
                   onClick={(e) => {
-                    e.stopPropagation(); 
+                    e.stopPropagation();
                     exportToFigma(design.id);
                   }}
                   disabled={exportLoading}
                 >
-                  {exportLoading ? 'جارٍ التصدير...' : 'فتح في Figma'}
+                  {exportLoading ? "جارٍ التصدير..." : "فتح في Figma"}
                 </button>
               </div>
             );
@@ -131,15 +149,13 @@ const handleSave = async ({ name, json_data, image_base64 }) => {
         </div>
       )}
 
-      {/* نافذة عرض الصفحات */}
       {selectedPagesDesign && (
-        <PagesModal 
-          design={selectedPagesDesign} 
-          onClose={() => setSelectedPagesDesign(null)} 
+        <PagesModal
+          design={selectedPagesDesign}
+          onClose={() => setSelectedPagesDesign(null)}
         />
       )}
 
-      {/* نافذة تعديل التصميم */}
       <EditDesignModal
         isOpen={!!selectedDesign}
         design={selectedDesign}

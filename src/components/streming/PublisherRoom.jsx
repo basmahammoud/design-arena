@@ -7,7 +7,7 @@ const PublisherRoom = ({ room, token }) => {
       try {
         const { connect, createLocalVideoTrack } = await import("https://cdn.skypack.dev/livekit-client");
 
-        const livekitRoom = await connect("wss://digitizer-a4odfmnb.livekit.cloud", token);
+        const livekitRoom = await connect("wss://digitizer-6wnqoum4.livekit.cloud", token);
 
         const videoTrack = await createLocalVideoTrack();
         await livekitRoom.localParticipant.publishTrack(videoTrack);

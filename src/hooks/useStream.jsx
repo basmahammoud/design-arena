@@ -27,7 +27,7 @@ const useStreaming = () => {
 
       // ✅ الاتصال بالغرفة
       const newRoom = new Room();
-      await newRoom.connect('wss://digitizer-a4odfmnb.livekit.cloud', data.access_token);
+      await newRoom.connect('wss://digitizer-6wnqoum4.livekit.cloud', data.access_token);
       console.log("✅ تم الاتصال بالغرفة LiveKit بنجاح!");
 
       setRoom(newRoom);

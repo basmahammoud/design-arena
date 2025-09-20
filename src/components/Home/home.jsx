@@ -1,11 +1,13 @@
 import "./home.css";
 import useHomeDesigns from "../../hooks/useHomepage";  
+import useUploadDesign from "../../hooks/uploadDesignImage"; 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaThumbsUp, FaEye } from "react-icons/fa"; 
 
 const Home = ({ designs: externalDesigns, loading: externalLoading }) => {
   const { designs: homeDesigns, loading: homeLoading, error } = useHomeDesigns(); 
+  const { uploadDesign, uploading, error: uploadError, data: uploadData } = useUploadDesign();
 
   const [filteredDesigns, setFilteredDesigns] = useState([]);
   const navigate = useNavigate();
@@ -17,17 +19,28 @@ const Home = ({ designs: externalDesigns, loading: externalLoading }) => {
     setFilteredDesigns(designs || []);
   }, [designs]);
 
-const handleEditClick = (designId) => {
-  localStorage.removeItem('editor-elements-desktop');
-  navigate(`/editor?type=desktop/${designId}`, {
-    state: { designId, fromHome: true },   
-  });
-};
-
-
+  const handleEditClick = (designId) => {
+    localStorage.removeItem('editor-elements-desktop');
+    navigate(`/editor?type=desktop/${designId}`, {
+      state: { designId, fromHome: true },   
+    });
+  };
 
   const goToPortfolio = (ownerId) => {
     navigate(`/portfolio/${ownerId}`);
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const result = await uploadDesign(file);
+      console.log("Upload success:", result);
+      alert("تم رفع التصميم بنجاح!");
+    } catch (err) {
+      console.error("Upload error:", err);
+    }
   };
 
   return (
@@ -42,8 +55,10 @@ const handleEditClick = (designId) => {
       <div className="design-grid">
         {filteredDesigns.map((design) => {
           let imageUrl = "/placeholder.png";
-          if (Array.isArray(design.image_path) && design.image_path.length > 0) {
-            imageUrl = `http://localhost:8000/${design.image_path[0]}`;
+
+          if (design.image_path) {
+            // تحويل المسار ليمكن الوصول إليه من المتصفح
+            imageUrl = `http://localhost:8000/${design.image_path}`;
           }
 
           return (
@@ -74,7 +89,6 @@ const handleEditClick = (designId) => {
                 </span>
               </div>
 
-              {/* 👇 حذف editLoading واستخدام الزر فقط للتنقّل */}
               <button
                 className="edit-button"
                 onClick={() => handleEditClick(design.id)}
@@ -84,6 +98,11 @@ const handleEditClick = (designId) => {
             </div>
           );
         })}
+      </div>
+
+      <div className="upload-section">
+        {uploading && <p>جارٍ الرفع...</p>}
+        {uploadError && <p style={{ color: "red" }}>خطأ بالرفع: {uploadError.message}</p>}
       </div>
     </div>
   );

@@ -85,11 +85,11 @@ export const uploadDesignImage = async (file) => {
   const formData = new FormData();
   formData.append('image', file);
 
-  const response = await axios.post('http://localhost:8000/designs/upload-image', formData, {
+  const response = await axios.post('http://localhost:8000/design/upload-image', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
-
+console.log("res:",response);
   return response.data;
 };
